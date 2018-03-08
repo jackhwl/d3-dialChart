@@ -1,0 +1,46 @@
+/*
+#dial-0 .needle path {
+  fill: beige;
+}
+
+#dial-1 .needle path {
+  fill: #b21f24;
+}
+
+#dial-2 .needle path {
+  fill: steelblue;
+} */
+
+circle.label {
+  fill: white;
+}
+
+line.label {
+  stroke: white;
+  stroke-width: 1px;
+}
+
+/* line.mlabel {
+  stroke: white;
+  stroke-width: 1px;
+} */
+
+
+line.mlabel {
+  stroke: #37A6FE;
+  stroke-width: 2px;
+}
+
+text.label {
+  font-family: Arial;
+  font-size: 12px;
+  fill: white;
+}
+
+#dial-1 text.label {
+  font-size: 16px;
+}
+
+#dial-2 text.label {
+  font-size: 14px;
+}
