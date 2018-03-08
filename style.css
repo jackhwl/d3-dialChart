@@ -20,12 +20,6 @@ line.label {
   stroke-width: 1px;
 }
 
-/* line.mlabel {
-  stroke: white;
-  stroke-width: 1px;
-} */
-
-
 line.mlabel {
   stroke: #37A6FE;
   stroke-width: 2px;
