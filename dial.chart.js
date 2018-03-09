@@ -18,6 +18,7 @@ NBXDialChart = function() {
       needleParam = {color: '#f00', type: 0, needle:[ 0.83, 0.05 ] };
 
   function dialchart(g) {
+    console.log(g);
     g.each(function(d, i) {
 
       var wm = w - m[1] - m[3],
@@ -96,7 +97,7 @@ NBXDialChart = function() {
     if (needleParam.type>0) {
         //scale gradient arc
         var arc = d3.svg.arc()
-            .innerRadius(r* scale[2]-25)
+            .innerRadius(r* scale[2]-35)
             .outerRadius(r* scale[2]-1.8)
             .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
             .endAngle(endRange * (Math.PI/180)); //just radians
@@ -138,10 +139,12 @@ NBXDialChart = function() {
             .attr("fill", "#37A6FE")
     }
 
-    var major = a.ticks(10);
-    var minor = a.ticks(10 * minorTicks).filter(function(d) { return major.indexOf(d) == -1; });
-    var middle = a.ticks(10 * minorTicks).filter(function(d) { return major.indexOf(d) != -1; });
+    var tick0 = 10;
+    var major = a.ticks(tick0);
+    var minor = a.ticks(tick0 * minorTicks).filter(function(d) { return major.indexOf(d) == -1; });
+    var middle = a.ticks(tick0 * minorTicks).filter(function(d) { return major.indexOf(d) != -1; });
     var majorRange = [major[0], major[major.length-1]];
+    // console.log('major');
     // console.log(major);
     // console.log(minor);
     // console.log(middle);

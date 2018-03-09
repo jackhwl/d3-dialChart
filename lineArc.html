@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>dials</title>
+
+    <script src="d3.min.js"></script>
+    <script type="text/javascript" src="dial.chart.js"></script>
+    <!-- <script src="//d3js.org/d3.v4.min.js"></script> -->
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <link rel=stylesheet href=style.css>
+
+
+  </head>
+<body>
+  <script>
+
+  var radius = 100,
+      padding = 10,
+      radians = 1.5 * Math.PI;
+
+  var dimension = (2 * radius) + (2 * padding),
+      points = 50;
+
+  var angle = d3.scale.linear()
+      .domain([0, points-1])
+      .range([0, radians]);
+
+  var line = d3.svg.line.radial()
+      .interpolate("basis")
+      .tension(0)
+      .radius(radius)
+      .angle(function(d, i) { return angle(i); });
+
+  var svg = d3.select("body").append("svg")
+      .attr("width", dimension)
+      .attr("height", dimension)
+  .append("g");
+
+  svg.append("path").datum(d3.range(points))
+      .attr("class", "lineArc")
+      .attr("d", line)
+      .attr("transform", "translate(" + (radius + padding) + ", " + (radius + padding) + ")");
+  </script>
+
+<body>
+</body>
+</html>
