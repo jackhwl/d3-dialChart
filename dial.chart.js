@@ -96,13 +96,14 @@ NBXDialChart = function() {
     if (needleParam.type>0) {
         //scale gradient arc
         var arc = d3.svg.arc()
-            .innerRadius(r* scale[2]-125)
+            .innerRadius(r* scale[2]-25)
             .outerRadius(r* scale[2]-1.8)
             .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
             .endAngle(endRange * (Math.PI/180)); //just radians
 
         g.append("path")
             .attr("d", arc)
+            //.attr("stroke-width", "20")
             .attr("fill", "url(#gradient0)")
 
       } else {
@@ -398,7 +399,7 @@ NBXDialChart = function() {
       }
       return res;
   }
-  
+
   dialchart.width = function(d) {
     if (!arguments.length) return w;
     w = d;
