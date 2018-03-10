@@ -18,32 +18,23 @@
 <body>
   <script>
 
-  var radius = 100,
-      padding = 10,
-      radians = 1.5 * Math.PI;
+  var radians = d3.scale.linear()
+    .range([Math.PI / 2, 3 * Math.PI / 2]);
 
-  var dimension = (2 * radius) + (2 * padding),
-      points = 50;
+// path generator for arcs (uses polar coordinates)
+var arc = d3.svg.line.radial()
+    .interpolate("linear")
+    .tension(0)
+    .angle(function(d) { return radians(d); });
 
-  var angle = d3.scale.linear()
-      .domain([0, points-1])
-      .range([0, radians]);
+    var svg = d3.select("body").append("svg")
+        .attr("width", 500)
+        .attr("height", 500)
+    .append("g");
 
-  var line = d3.svg.line.radial()
-      .interpolate("basis")
-      .tension(0)
-      .radius(radius)
-      .angle(function(d, i) { return angle(i); });
-
-  var svg = d3.select("body").append("svg")
-      .attr("width", dimension)
-      .attr("height", dimension)
-  .append("g");
-
-  svg.append("path").datum(d3.range(points))
-      .attr("class", "lineArc")
-      .attr("d", line)
-      .attr("transform", "translate(" + (radius + padding) + ", " + (radius + padding) + ")");
+    svg.append("path").datum(d3.range(50))
+        .attr("class", "lineArc")
+        .attr("d", arc)
   </script>
 
 <body>

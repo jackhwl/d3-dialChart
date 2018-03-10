@@ -22,8 +22,8 @@ line.label {
 
 .lineArc {
   fill: none;
-  *stroke: steelblue;
-  *stroke-width: 2.5px;
+  stroke: steelblue;
+  stroke-width: 2.5px;
 }
 
 line.mlabel {
