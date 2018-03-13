@@ -15,7 +15,9 @@ NBXDialChart = function() {
       pivot = [ 0.10, 0.05 ], //centre outside radius
       needleParam = {color: '#f00', type: 0, needle:[ 0.83, 0.05 ] },
       palette = {bg: '#000', scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
-      tick = {minor: 5, major: 0, mark: 'line', m: 100, exact: false}
+      tick = {minor: 5, major: 0, mark: 'line', m: 100, exact: false},
+      caption= [{text: '100', color: '#37A6FE', size: '2.0em'},
+              {text: 'Speed Score', color: '#37A6FE', size: '1.5em'}]
       ;
 
   function dialchart(g) {
@@ -32,8 +34,10 @@ NBXDialChart = function() {
 
         g = d3.select(this).append('svg:g')
           .attr('transform', 'translate(' + (m[3] + wm / 2) + ',' + (m[0] + hm / 2) + ')');
+        var ctransform = 'translate(' + (1)*(m[3] + wm / 2) + ',' + (m[0] + hm / 2) + ')';
 
         var y2 = needleParam.type===1 ? -r * needleParam.needle[0]:0;
+        drawCaption(g, ctransform);
         createDefs(g.append('svg:defs'), 0,0,0.5,1);
         drawRim(a(d), g.append('svg:g'), r);
         drawScale(a, g, r);
@@ -503,6 +507,70 @@ NBXDialChart = function() {
 
   }
 
+  function drawCaption(g, transform) {
+    // needle
+    // var n = g.append('svg:g')
+    //   .attr('class', 'needle')
+    //   .attr('filter', 'url(#dropShadow)')
+    //   .attr('transform', function(d) { return 'rotate(' + a(d) + ')'; })
+    //   ;
+
+    g.selectAll('text')
+      .data(caption)
+      .enter().append('svg:text')
+      // .attr("dx", function(d){return 0})
+      // .attr("dy", function(d){return -30})
+      .text(function(d){return d.text})
+      .attr({
+        'dx': function(d){return d.dx},
+        'dy': function(d){return d.dy},
+        'font-family': function(d){return d.family},
+        'font-size': function(d){return d.size},
+        'font-weight': function(d){return d.weight},
+        'fill': function(d){return d.color},
+        'alignment-baseline': 'middle',
+        'text-anchor': 'middle',
+      })
+      ;
+
+    // g.append("svg:text")
+    //     .data(caption)
+    //     .attr("dx", function(d){return 0})
+    //     .attr("dy", function(d){return -30})
+    //     .text(function(d){return caption[1].text})
+    //     .attr({
+    //       'alignment-baseline': 'middle',
+    //       'text-anchor': 'middle',
+    //       'font-family': caption[1].family,
+    //       'font-size': caption[1].size,
+    //       'font-weight': caption[1].weight,
+    //       'fill': caption[1].color
+    //     })
+    //     //.attr('transform', transform)
+    //
+    //     ;
+
+    // if (needleParam.type===1) {
+    //   n.append('svg:line')
+    //   .attr('class', 'needle')
+    //   .attr('stroke', palette.needle)
+    //   .attr('stroke-width', (needleParam.needle[1] * 40) +'px')
+    //   .attr('x1', 0)
+    //   .attr('y1', 0)
+    //   .attr('x2', 0)
+    //   .attr('y2', -r * needleParam.needle[0]);
+    // } else {
+    //   n.append('svg:path')
+    //     .attr('d', 'M ' + (-r * needleParam.needle[1]) + ',0 L0,' + (-r * needleParam.needle[0])+ ' L' + r * needleParam.needle[1] + ',0')
+    //     .attr('fill', palette.needle);
+    // }
+    //
+    //   n.append('svg:circle')
+    //     .attr('r', r * pivot[1])
+    //     .style('fill', palette.pivot)
+    //     ;
+  }
+
   dialchart.width = function(d) {
     if (!arguments.length) return w;
     w = d;
@@ -563,6 +631,11 @@ NBXDialChart = function() {
     return dialchart;
   };
 
+  dialchart.caption = function(d) {
+    if (!arguments.length) return caption;
+    caption = d;
+    return dialchart;
+  };
 
   return dialchart;
 

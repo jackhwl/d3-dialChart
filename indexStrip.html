@@ -24,17 +24,21 @@
           h = 500,
           bgColor = '#000',
           scale= [ 0.71, 0.75, 0.76, 0.14 ],
-          pivot= [ 0.10, 0.05 ]
+          pivot= [ 0.10, 0.05 ],
+          caption= [{text: '200', color: '#37A6FE', family: 'Arial', size: '2.0em', weight: 'normal'},
+                  {text: 'Speed Score', color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: '20px', weight: '100'}]
           ;
 
       var layout = [
       //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
-         { x: 400, y: 250, r: 150, tick: {m: 220, minor: 5, major: 10, mark: 'line', exact: false}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot   },
+         { x: 400, y: 250, r: 150, tick: {m: 220, minor: 5, major: 10, mark: 'line', exact: false}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot, caption: caption  },
          //{ x: 610, y: 250, r: 40, m: 80, ticks: 2, mark: 'circle', needle:{color:'steelblue'}, scale:scale   },
           { x: 810, y: 250, r: 280, tick: {m: 220, minor: 5, major: 14, mark: 'line', exact: true}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
           needle:{type: 1, needle: [0.75, 0.05]},
           scale: [ 0.71, 0.875, 0.76, 0.14 ],
-          pivot: [ 0.10, 0.02 ]
+          pivot: [ 0.10, 0.02 ],
+          caption: [{text: '100', dx: 0, dy: -60, color: '#37A6FE', family: 'SegoeUI', size: '30px', weight: '100'},
+                  {text: 'Speed Score', dx: 0, dy: -30, color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: '20px', weight: '100'}]
         }
       ];
       var charts = layout.map(function(d) {
@@ -49,6 +53,7 @@
           .pivot(d.pivot)
           .palette(d.palette)
           .tick(d.tick)
+          .caption(d.caption)
           ;
       });
       //console.log(charts);
@@ -181,18 +186,21 @@
         var newr = Math.random()*200,
         newr1 = Math.random()*200;
         layout = [
-          //{ x: 150, y: 250, r: newr1, m: 100, ticks: 2, mark: 'line' },
-           { x: 460, y: 250, r: newr, m: 50, ticks: 4, mark: 'line' },
-           //{ x: 910, y: 250, r: 60, m: 80, ticks: 2, mark: 'circle' }
+          { x: 400, y: 250, r: newr, tick: {m: 220, minor: 5, major: 10, mark: 'line', exact: false}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot   },
+          //{ x: 610, y: 250, r: 40, m: 80, ticks: 2, mark: 'circle', needle:{color:'steelblue'}, scale:scale   },
+           { x: 810, y: 250, r: newr, tick: {m: 220, minor: 5, major: 14, mark: 'line', exact: true}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
+           needle:{type: 1, needle: [0.75, 0.05]},
+           scale: [ 0.71, 0.875, 0.76, 0.14 ],
+           pivot: [ 0.10, 0.02 ]
+         }
         ];
         charts = layout.map(function(d) {
           return NBXDialChart()
             .width(d.r * 2)
             .height(d.r * 2)
-            .domain([0, d.m])
+            .domain([0, d.tick.m])
             .range([-135, 135])
-            .minorTicks(d.ticks)
-            .minorMark(d.mark);
+            ;
         });
         // charts[0].width = function() { return Math.random()*1000;}
         //     ;
