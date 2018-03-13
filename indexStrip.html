@@ -29,9 +29,9 @@
 
       var layout = [
       //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
-         { x: 400, y: 250, r: 150, m: 220, ticks: 5, mark: 'line', tick: {minor: 5, major: 0, mark: 'line'}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot   },
+         { x: 400, y: 250, r: 150, tick: {m: 220, minor: 5, major: 10, mark: 'line', exact: false}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot   },
          //{ x: 610, y: 250, r: 40, m: 80, ticks: 2, mark: 'circle', needle:{color:'steelblue'}, scale:scale   },
-          { x: 810, y: 250, r: 280, m: 200, ticks: 1, mark: 'line', tick: {minor: 10, major: 15, mark: 'line'}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
+          { x: 810, y: 250, r: 280, tick: {m: 220, minor: 5, major: 14, mark: 'line', exact: true}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
           needle:{type: 1, needle: [0.75, 0.05]},
           scale: [ 0.71, 0.875, 0.76, 0.14 ],
           pivot: [ 0.10, 0.02 ]
@@ -43,10 +43,8 @@
           .height(d.r * 2)
           //.margin([ -50, -50, -50, -50 ])
           .scale(d.scale)
-          .domain([0, d.m])
+          .domain([0, d.tick.exact ? d.tick.minor * d.tick.major : d.tick.m])
           .range([-135, 135])
-          .minorTicks(d.ticks)
-          .minorMark(d.mark)
           .needleParam(d.needle)
           .pivot(d.pivot)
           .palette(d.palette)
@@ -75,7 +73,7 @@
 
           //console.log(dials);
 
-      dials.each(function(d, i) { d3.select(this).data([200]).call(charts[i]); });
+      dials.each(function(d, i) { d3.select(this).data([70*200/220]).call(charts[i]); });
 
       // function GradientColorGenerater(svg, colors) {
       //     if (!svg) return;

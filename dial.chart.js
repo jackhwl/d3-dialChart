@@ -8,8 +8,6 @@ NBXDialChart = function() {
       m = [ 0, 0, 0, 0 ], // top right bottom left
       domain = [0, 1],
       range = [-135, 135],
-      minorTicks = 5,
-      minorMark = 'line',
 
       dial = [ 1.00, 0.95, 0.92, 0.85 ],
       scale = [ 0.71, 0.75, 0.76, 0.15 ], // mark line from centre of circle start, number from centre of circle, mark line from centre of circle end, rim width
@@ -17,7 +15,7 @@ NBXDialChart = function() {
       pivot = [ 0.10, 0.05 ], //centre outside radius
       needleParam = {color: '#f00', type: 0, needle:[ 0.83, 0.05 ] },
       palette = {bg: '#000', scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
-      tick = {minor: 5, major: 0, mark: 'line'}
+      tick = {minor: 5, major: 0, mark: 'line', m: 100, exact: false}
       ;
 
   function dialchart(g) {
@@ -195,51 +193,28 @@ NBXDialChart = function() {
           .attr("fill", palette.scale)
     }
 
-    var a1 = a.ticks(40);
-    var tf = a.tickFormat(40, '+%');
-    a1.map(tf);
-    console.log(a1);
-    //console.log(a1.map(tf));
-    var tick0 = 10;
-    var major = a.ticks(tick0);
-    var minor = a.ticks(tick0 * tick.minor);//.filter(function(d) { return major.indexOf(d) == -1; });
-    var middle = a.ticks(tick0 * tick.minor).filter(function(d) { return major.indexOf(d) != -1; });
-    var majorRange = [major[0], major[major.length-1]];
+    // var tick0 = 10;
+    // var major = a.ticks(tick0);
+    // var minor = a.ticks(tick0 * minorTicks).filter(function(d) { return major.indexOf(d) == -1; });
+    // var middle = a.ticks(tick0 * minorTicks).filter(function(d) { return major.indexOf(d) != -1; });
 
-    if (needleParam.type>0) {
-       // tick2 = tick.minor * tick.major;
-       // major = a.ticks(tick2)
-       // minor = a.ticks(tick2).filter(function(d) { return major.indexOf(d) == -1; });
-       // middle = a.ticks(tick2).filter(function(d) { return major.indexOf(d) != -1; });
-       // majorRange = [major[0], major[major.length-1]];
-
-
-          console.log('major');
-          console.log(tick.minor);
-          console.log(tick0);
-          console.log(major);
-          console.log(minor);
-          console.log(middle);
-          console.log(majorRange);
-    }
-
-    // console.log('major');
-    // console.log(major);
-    // console.log(minor);
-    // console.log(middle);
-    // console.log(majorRange);
+    //var tick0 = tick.major===1 ? 10 : tick.major;
+    var major = a.ticks(tick.major);
+    var minor = a.ticks(tick.minor * tick.major);//.filter(function(d) { return major.indexOf(d) == -1; });
+    var middle = a.ticks(tick.minor * tick.major).filter(function(d) { return major.indexOf(d) != -1; });
+    var majorRange = tick.exact ? [major[0], tick.m] : [major[0], major[major.length-1]];
 
     g.selectAll('text.label')
       .data(needleParam.type>0 ? majorRange : major)
       .enter().append('svg:text')
         .attr('class', 'label')
-        .attr('x', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * r * scale[1]; })
-        .attr('y', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * r * scale[1]; })
+        .attr('x', function(d) { return Math.cos( (-90 + a((tick.exact ? d / tick.m * major[major.length-1] : d))) / 180 * Math.PI) * r * scale[1]; })
+        .attr('y', function(d) { return Math.sin( (-90 + a((tick.exact ? d / tick.m * major[major.length-1] : d))) / 180 * Math.PI) * r * scale[1]; })
         .attr('text-anchor', 'middle')
         .attr('dy', '0.5em')
         .text(a.tickFormat());
 
-    if (minorMark == 'circle') {
+    if (tick.mark == 'circle') {
       g.selectAll('circle.label')
           .data(minor)
         .enter().append('svg:circle')
@@ -249,7 +224,7 @@ NBXDialChart = function() {
           .attr('r', 2);
     }
 
-    if (minorMark == 'line') {
+    if (tick.mark == 'line') {
       if (needleParam.type>0) {
         g.selectAll('line.label')
           .data(minor)
@@ -561,18 +536,6 @@ NBXDialChart = function() {
   dialchart.scale = function(d) {
     if (!arguments.length) return scale;
     scale = d;
-    return dialchart;
-  };
-
-  dialchart.minorTicks = function(d) {
-    if (!arguments.length) return minorTicks;
-    minorTicks = d;
-    return dialchart;
-  };
-
-  dialchart.minorMark = function(d) {
-    if (!arguments.length) return minorMark;
-    minorMark = d;
     return dialchart;
   };
 
