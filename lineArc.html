@@ -20,14 +20,16 @@
 
   var radius = 100,
       padding = 10,
-      radians = 1.5 * Math.PI;
+      radians = 1 * Math.PI,
+      range = [-135*Math.PI/180, 135*Math.PI/180]
+      ;
 
   var dimension = (2 * radius) + (2 * padding),
-      points = 50;
+      points = 220;
 
   var angle = d3.scale.linear()
       .domain([0, points-1])
-      .range([0, radians]);
+      .range(range);
 
   var line = d3.svg.line.radial()
       .interpolate("basis")

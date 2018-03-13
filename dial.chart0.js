@@ -8,19 +8,17 @@ NBXDialChart = function() {
       m = [ 0, 0, 0, 0 ], // top right bottom left
       domain = [0, 1],
       range = [-135, 135],
-      minorTicks = 5,
+      minorTicks = 4,
       minorMark = 'line',
 
       dial = [ 1.00, 0.95, 0.92, 0.85 ],
-      scale = [ 0.71, 0.75, 0.76, 0.15 ], // mark line from centre of circle start, number from centre of circle, mark line from centre of circle end, rim width
+      scale = [ 0.71, 0.75, 0.76 ], // mark line from centre of circle start, number from centre of circle, mark line from centre of circle end
       needle = [ 0.83, 0.05 ], //length, width
       pivot = [ 0.10, 0.05 ], //centre outside radius
-      needleParam = {color: '#f00', type: 0, needle:[ 0.83, 0.05 ] },
-      palette = {bg: '#000', scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
-      tick = {minor: 5, major: 0, mark: 'line'}
-      ;
+      needleParam = {color: '#f00', type: 0, needle:[ 0.83, 0.05 ] };
 
   function dialchart(g) {
+    console.log(g);
     g.each(function(d, i) {
 
       var wm = w - m[1] - m[3],
@@ -37,10 +35,50 @@ NBXDialChart = function() {
 
         var y2 = needleParam.type===1 ? -r * needleParam.needle[0]:0;
         createDefs(g.append('svg:defs'), 0,0,0.5,1);
-        drawRim(a(d), g.append('svg:g'), r);
+        drawRim(a(d), g, r);
         drawScale(a, g, r);
         drawGlare(g, r);
-        drawNeedle(a, g, r);
+
+        // needle
+        var n = g.append('svg:g')
+          .attr('class', 'needle')
+          .attr('filter', 'url(#dropShadow)')
+          .attr('transform', function(d) { return 'rotate(' + a(d) + ')'; })
+          ;
+
+        if (needleParam.type>0) {
+            if (needleParam.type===1) {
+              n.append('svg:line')
+              .attr('class', 'needle')
+              .attr('stroke', needleParam.color)
+              .attr('stroke-width', (needleParam.needle[1] * 40) +'px')
+              .attr('x1', 0)
+              .attr('y1', 0)
+              .attr('x2', 0)
+              .attr('y2', -r * needleParam.needle[0]);
+            } else {
+              n.append('svg:path')
+                .attr('d', 'M ' + (-r * needleParam.needle[1]) + ',0 L0,' + (-r * needleParam.needle[0])+ ' L' + r * needleParam.needle[1] + ',0')
+                .attr('fill', needleParam.color);
+            }
+
+          n.append('svg:circle')
+            .attr('r', r * pivot[1])
+            .style('fill', needleParam.color)
+            ;
+        } else {
+          n.append('svg:path')
+            .attr('d', 'M ' + (-r * needle[1]) + ',0 L0,' + (-r * needle[0])+ ' L' + r * needle[1] + ',0')
+            .attr('fill', needleParam.color);
+
+          n.append('svg:circle')
+            .attr('r', r * pivot[0])
+            .style('fill', 'url(#outerGradient)');
+
+          n.append('svg:circle')
+            .attr('r', r * pivot[1])
+            .style('fill', 'url(#innerGradient)');
+        }
 
       } else {
 
@@ -58,51 +96,19 @@ NBXDialChart = function() {
   function drawRim(endRange, g, r) {
     if (needleParam.type>0) {
         //scale gradient arc
-        // var arc = d3.svg.arc()
-        //     .innerRadius(r* scale[2]-35)
-        //     .outerRadius(r* scale[2]-1.8)
-        //     .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
-        //     .endAngle(endRange * (Math.PI/180)); //just radians
-        //
-        // g.append("path")
-        //     .attr("d", arc)
-        //     //.attr("stroke-width", "20")
-        //     .attr("fill", "url(#gradient0)")
+        var arc = d3.svg.arc()
+            .innerRadius(r* scale[2]-35)
+            .outerRadius(r* scale[2]-1.8)
+            .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
+            .endAngle(endRange * (Math.PI/180)); //just radians
+
+        g.append("path")
+            .attr("d", arc)
+            //.attr("stroke-width", "20")
+            .attr("fill", "url(#gradient0)")
 
 
-        // strip rim
-        var points = 50;
-        var angle = d3.scale.linear()
-            .domain([0, points-1])
-            .range([range[0] * (Math.PI/180), endRange * (Math.PI/180)]);
 
-        var line = d3.svg.line.radial()
-            .interpolate("basis")
-            .tension(0)
-            .radius(r* scale[2]-2-(r* scale[3]/2))
-            .angle(function(d, i) { return angle(i); });
-
-        // var svg = d3.select("body").append("svg")
-        //     // .attr("width", dimension)
-        //     // .attr("height", dimension)
-        // .append("g");
-
-        g.append("path").datum(d3.range(points))
-            //.attr("class", "lineArc")
-            .attr("d", line)
-            //.attr("transform", "translate(" + (r + padding) + ", " + (r + padding) + ")")
-            ;
-        var color = d3.interpolate(palette.bg, palette.rim);
-
-        var path = g.select("path").remove();
-        g.selectAll("path")
-                .data(quads(samples(path.node(), 8)))
-              .enter().append("path")
-                .style("fill", function(d) { return color(d.t); })
-                .style("stroke", function(d) { return color(d.t); })
-                .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], (r* scale[3])); })
-                //.attr("transform", "translate(" + 810 + ", " + 250 + ")")
-                ;
       } else {
         //face
         g.append('svg:circle')
@@ -184,45 +190,22 @@ NBXDialChart = function() {
   function drawScale(a, g, r) {
     if (needleParam.type>0) {
       //scale arc thin rim
-      var arc = d3.svg.arc()
-          .innerRadius(r* scale[2]-2)
-          .outerRadius(r* scale[2]+1)
-          .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
-          .endAngle(range[1] * (Math.PI/180)); //just radians
+        var arc = d3.svg.arc()
+            .innerRadius(r* scale[2]-2)
+            .outerRadius(r* scale[2]+1)
+            .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
+            .endAngle(range[1] * (Math.PI/180)); //just radians
 
-      g.append("path")
-          .attr("d", arc)
-          .attr("fill", palette.scale)
+        g.append("path")
+            .attr("d", arc)
+            .attr("fill", "#37A6FE")
     }
 
-    var a1 = a.ticks(40);
-    var tf = a.tickFormat(40, '+%');
-    a1.map(tf);
-    console.log(a1);
-    //console.log(a1.map(tf));
     var tick0 = 10;
     var major = a.ticks(tick0);
-    var minor = a.ticks(tick0 * tick.minor);//.filter(function(d) { return major.indexOf(d) == -1; });
-    var middle = a.ticks(tick0 * tick.minor).filter(function(d) { return major.indexOf(d) != -1; });
+    var minor = a.ticks(tick0 * minorTicks).filter(function(d) { return major.indexOf(d) == -1; });
+    var middle = a.ticks(tick0 * minorTicks).filter(function(d) { return major.indexOf(d) != -1; });
     var majorRange = [major[0], major[major.length-1]];
-
-    if (needleParam.type>0) {
-       // tick2 = tick.minor * tick.major;
-       // major = a.ticks(tick2)
-       // minor = a.ticks(tick2).filter(function(d) { return major.indexOf(d) == -1; });
-       // middle = a.ticks(tick2).filter(function(d) { return major.indexOf(d) != -1; });
-       // majorRange = [major[0], major[major.length-1]];
-
-
-          console.log('major');
-          console.log(tick.minor);
-          console.log(tick0);
-          console.log(major);
-          console.log(minor);
-          console.log(middle);
-          console.log(majorRange);
-    }
-
     // console.log('major');
     // console.log(major);
     // console.log(minor);
@@ -230,7 +213,7 @@ NBXDialChart = function() {
     // console.log(majorRange);
 
     g.selectAll('text.label')
-      .data(needleParam.type>0 ? majorRange : major)
+        .data(needleParam.type>0 ? majorRange : major)
       .enter().append('svg:text')
         .attr('class', 'label')
         .attr('x', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * r * scale[1]; })
@@ -252,26 +235,24 @@ NBXDialChart = function() {
     if (minorMark == 'line') {
       if (needleParam.type>0) {
         g.selectAll('line.label')
-          .data(minor)
+            .data(minor)
           .enter().append('svg:line')
             .attr('class', 'mlabel')
-            .attr('stroke', palette.scale)
             .attr('x1', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * (scale[0]+0.01)); })
             .attr('y1', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * (scale[0]+0.01)); })
             .attr('x2', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * scale[2]); })
             .attr('y2', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * scale[2]); });
         g.selectAll('line.label')
-          .data(middle)
+            .data(middle)
           .enter().append('svg:line')
             .attr('class', 'mlabel')
-            .attr('stroke', palette.scale)
             .attr('x1', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * (scale[0]-0.02)); })
             .attr('y1', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * (scale[0]-0.02)); })
             .attr('x2', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * scale[2]); })
             .attr('y2', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * scale[2]); });
       } else {
         g.selectAll('line.label')
-          .data(minor)
+            .data(minor)
           .enter().append('svg:line')
             .attr('class', 'label')
             .attr('x1', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * scale[0]); })
@@ -484,50 +465,6 @@ NBXDialChart = function() {
       return res;
   }
 
-  function drawNeedle(a, g, r) {
-    // needle
-    var n = g.append('svg:g')
-      .attr('class', 'needle')
-      .attr('filter', 'url(#dropShadow)')
-      .attr('transform', function(d) { return 'rotate(' + a(d) + ')'; })
-      ;
-
-    if (needleParam.type>0) {
-        if (needleParam.type===1) {
-          n.append('svg:line')
-          .attr('class', 'needle')
-          .attr('stroke', palette.needle)
-          .attr('stroke-width', (needleParam.needle[1] * 40) +'px')
-          .attr('x1', 0)
-          .attr('y1', 0)
-          .attr('x2', 0)
-          .attr('y2', -r * needleParam.needle[0]);
-        } else {
-          n.append('svg:path')
-            .attr('d', 'M ' + (-r * needleParam.needle[1]) + ',0 L0,' + (-r * needleParam.needle[0])+ ' L' + r * needleParam.needle[1] + ',0')
-            .attr('fill', palette.needle);
-        }
-
-      n.append('svg:circle')
-        .attr('r', r * pivot[1])
-        .style('fill', palette.pivot)
-        ;
-    } else {
-      n.append('svg:path')
-        .attr('d', 'M ' + (-r * needle[1]) + ',0 L0,' + (-r * needle[0])+ ' L' + r * needle[1] + ',0')
-        .attr('fill', palette.needle);
-
-      n.append('svg:circle')
-        .attr('r', r * pivot[0])
-        .style('fill', 'url(#outerGradient)');
-
-      n.append('svg:circle')
-        .attr('r', r * pivot[1])
-        .style('fill', 'url(#innerGradient)');
-    }
-
-  }
-
   dialchart.width = function(d) {
     if (!arguments.length) return w;
     w = d;
@@ -587,19 +524,6 @@ NBXDialChart = function() {
     pivot = d;
     return dialchart;
   };
-
-  dialchart.palette = function(d) {
-    if (!arguments.length) return palette;
-    palette = d;
-    return dialchart;
-  };
-
-  dialchart.tick = function(d) {
-    if (!arguments.length) return tick;
-    tick = d;
-    return dialchart;
-  };
-
 
   return dialchart;
 

@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>dials</title>
+
+    <script type="text/javascript" src="d3.min.js"></script>
+    <script type="text/javascript" src="dial.chart.js"></script>
+    <link rel=stylesheet href=style.css>
+
+  </head>
+<body>
+  https://bl.ocks.org/dankronstal/b12b025d0eea52ad3f4a
+  <button id="update" onclick="transition()">Update</button>
+  <div id="chart">
+  </div>
+  <div id="my">
+  </div>
+  <script type="text/javascript">
+
+    (function(chartselector) {
+
+      var w = 1260,
+          h = 500,
+          bgColor = '#000',
+          scale= [ 0.71, 0.75, 0.76, 0.14 ],
+          pivot= [ 0.10, 0.05 ]
+          ;
+
+      var layout = [
+      //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
+         { x: 400, y: 250, r: 150, m: 220, ticks: 5, mark: 'line', tick: {minor: 5, major: 0, mark: 'line'}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot   },
+         //{ x: 610, y: 250, r: 40, m: 80, ticks: 2, mark: 'circle', needle:{color:'steelblue'}, scale:scale   },
+          { x: 810, y: 250, r: 280, m: 200, ticks: 1, mark: 'line', tick: {minor: 10, major: 15, mark: 'line'}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
+          needle:{type: 1, needle: [0.75, 0.05]},
+          scale: [ 0.71, 0.875, 0.76, 0.14 ],
+          pivot: [ 0.10, 0.02 ]
+        }
+      ];
+      var charts = layout.map(function(d) {
+        return NBXDialChart()
+          .width(d.r * 2)
+          .height(d.r * 2)
+          //.margin([ -50, -50, -50, -50 ])
+          .scale(d.scale)
+          .domain([0, d.m])
+          .range([-135, 135])
+          .minorTicks(d.ticks)
+          .minorMark(d.mark)
+          .needleParam(d.needle)
+          .pivot(d.pivot)
+          .palette(d.palette)
+          .tick(d.tick)
+          ;
+      });
+      //console.log(charts);
+      //console.log(charts[0].width());
+
+
+      var svg = d3.select(chartselector)
+          .append('svg:svg')
+          .attr('width', w)
+          .attr('height', h)
+          .attr('style', 'background: ' + bgColor)
+          ;
+
+      var dials = svg.selectAll('g.dial')
+          .data(layout)
+          .enter()
+          .append('svg:g')
+          .attr('class', 'dial')
+          .attr('id', function(d, i) { return 'dial-' + i; })
+          .attr('transform', function(d) { return 'translate(' + (d.x - d.r) + ',' + (d.y - d.r) + ')'; } )
+          ;
+
+          //console.log(dials);
+
+      dials.each(function(d, i) { d3.select(this).data([200]).call(charts[i]); });
+
+      // function GradientColorGenerater(svg, colors) {
+      //     if (!svg) return;
+      //     let defs = svg.append("svg:defs");
+      //     let res = [];
+      //     if (Array.isArray(colors)) {
+      //         colors.forEach(function (item, index) {
+      //             let next = colors[index + 1] || colors[0];
+      //             let id = `color_gradient_${index}`;
+      //             let gradient = defs.append("svg:linearGradient")
+      //                 .attr("id", id);
+      //
+      //             gradient.append("svg:stop")
+      //                 .attr("offset", "0%")
+      //                 .attr("stop-color", item.color);
+      //
+      //             gradient.append("svg:stop")
+      //                 .attr("offset", "100%")
+      //                 .attr("stop-color", next.color);
+      //
+      //             res[index] = {
+      //                 gradient:gradient,
+      //                 color: `url(#${id})`,
+      //                 percent: item.percent
+      //             }
+      //         });
+      //     }
+      //     return res;
+      // }
+      //
+      //
+      // svg = d3.select(chartselector).append('svg')
+      //         .attr("width", 300)
+      //         .attr("height", 300)
+      //         .append("g")
+      //         .attr("transform", "translate(150,150)");
+      //
+      // let pie = d3.layout.pie().sort(null);
+      //
+      // let arc = d3.svg.arc().innerRadius(120)
+      // .outerRadius(86)
+      // // .startAngle(-175 * (Math.PI/180)) //converting from degs to radians
+      // // .endAngle(175 * (Math.PI/180)); //just radians
+      // ;
+      //
+      // let colors = GradientColorGenerater(svg, [
+      //     {
+      //         color: "#01E400",
+      //         percent: 1
+      //     },
+      //     {
+      //         color: "#FEFF01",
+      //         percent: 1
+      //     },
+      //     {
+      //         color: "#FF7E00",
+      //         percent: 1
+      //     },
+      //     {
+      //         color: "#FB0300",
+      //         percent: 1
+      //     },
+      //     {
+      //         color: "#9B004A",
+      //         percent: 1
+      //
+      //     },
+      //     {
+      //         color: "#7D0022",
+      //         percent: 1
+      //
+      //     }
+      // ]);
+      //
+      // function pointOfAngle(angle){
+      //     return {
+      //         x:Math.sin(angle),
+      //         y:Math.cos(angle)
+      //     }
+      // }
+      //
+      // let cricle = svg.datum(colors.map((item)=> item.percent))
+      //     .selectAll("path")
+      //     .data(pie)
+      //     .enter()
+      //     .append("path")
+      //     .attr("fill", function (d, i) {
+      //
+      //         let startPoint = pointOfAngle(d.startAngle - Math.PI/2),
+      //             endPoint = pointOfAngle(d.endAngle - Math.PI/2);
+      //
+      //         colors[i].gradient
+      //             .attr('x1',startPoint.x)
+      //             .attr('y1',startPoint.y)
+      //             .attr('x2',endPoint.x)
+      //             .attr('y2',endPoint.y);
+      //         return colors[i].color;
+      //     })
+      //     .attr("d", arc);
+
+
+
+
+      window.transition = function() {
+        var newr = Math.random()*200,
+        newr1 = Math.random()*200;
+        layout = [
+          //{ x: 150, y: 250, r: newr1, m: 100, ticks: 2, mark: 'line' },
+           { x: 460, y: 250, r: newr, m: 50, ticks: 4, mark: 'line' },
+           //{ x: 910, y: 250, r: 60, m: 80, ticks: 2, mark: 'circle' }
+        ];
+        charts = layout.map(function(d) {
+          return NBXDialChart()
+            .width(d.r * 2)
+            .height(d.r * 2)
+            .domain([0, d.m])
+            .range([-135, 135])
+            .minorTicks(d.ticks)
+            .minorMark(d.mark);
+        });
+        // charts[0].width = function() { return Math.random()*1000;}
+        //     ;
+            //console.log(charts[0].width());
+        svg.selectAll('g.dial').remove();
+
+        var dials = svg.selectAll('g.dial')
+            .data(layout);
+        dials.exit().remove();
+        dials.enter()
+            .append('svg:g')
+            .attr('class', 'dial')
+            .attr('id', function(d, i) { return 'dial-' + i; })
+            .attr('transform', function(d) { return 'translate(' + (d.x - d.r) + ',' + (d.y - d.r) + ')'; } )
+            ;
+
+        dials.each(function(d, i) {
+          d3.select(this)
+            .data([ Math.random() * charts[i].domain()[1] ])
+            .call(charts[i])
+            ;
+        });
+      };
+
+      // d3.select("#my")
+      //   .append('svg:svg')
+      //   .append("rect")
+      //     .attr('width', 50)
+      //     .attr('height', 200)
+      //     .style("fill", "#666");
+
+
+    })('#chart');
+
+  </script>
+  <div style="margin-left: 600px;background-color: #000;">
+  <img src="download.png" width="400" style="padding: 20px 20px" />
+  </div>
+</body>
+</html>
+<!-- browser-sync start --server --directory --port "8080" --ui-port "9090" -->
