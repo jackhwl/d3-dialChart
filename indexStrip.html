@@ -14,8 +14,6 @@
   <button id="update" onclick="transition()">Update</button>
   <div id="chart">
   </div>
-  <div id="my">
-  </div>
   <script type="text/javascript">
 
     (function(chartselector) {
@@ -23,42 +21,49 @@
       var w = 1260,
           h = 500,
           bgColor = '#000',
-          scale= [ 0.71, 0.75, 0.76, 0.14 ],
+          tick = {minor: 5, major: 10, mark: 'line', exact: false},
+          tick1 = {minor: 5, major: 10, mark: 'circle', exact: false},
+          scale = { text: {position: 0.75, dy: 0.5, color: '#fff', family: 'SegoeUI', size: 20, scale: 0.005, weight: '100'},
+                  position: {start: 0.71, end: 0.76 }, rim: 0.14 },
+          needle = {type: 0, length: 0.75, width: 0.05},
           pivot= [ 0.10, 0.05 ],
-          caption= [{text: '200', color: '#37A6FE', family: 'Arial', size: '2.0em', weight: 'normal'},
-                  {text: 'Speed Score', color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: '20px', weight: '100'}]
+          scaleDomain= [0, 220],
+          range= [-135, 135],
+          palette = {bg: bgColor, scale:'#37A6FE', rim:['#031835', '#0279DF'], pivot: '#fff', needle: '#b21f24'},
+          caption= [{text: 200, dy: -1.2, color: '#37A6FE', family: 'Arial', size: 50, scale: 0.01, weight: 'normal'},
+                  {text: 'Speed Score', dy: -0.9, color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: 20, scale:0.01, weight: '100'}]
           ;
 
       var layout = [
-      //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
-         { x: 400, y: 250, r: 150, tick: {m: 220, minor: 5, major: 10, mark: 'line', exact: false}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot, caption: caption  },
-         //{ x: 610, y: 250, r: 40, m: 80, ticks: 2, mark: 'circle', needle:{color:'steelblue'}, scale:scale   },
-          { x: 810, y: 250, r: 280, tick: {m: 220, minor: 5, major: 14, mark: 'line', exact: true}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
-          needle:{type: 1, needle: [0.75, 0.05]},
-          scale: [ 0.71, 0.875, 0.76, 0.14 ],
-          pivot: [ 0.10, 0.02 ],
-          caption: [{text: '100', dx: 0, dy: -60, color: '#37A6FE', family: 'SegoeUI', size: '30px', weight: '100'},
-                  {text: 'Speed Score', dx: 0, dy: -30, color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: '20px', weight: '100'}]
-        }
+        //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
+          { x: 400, y: 250, r: 180, tick: tick, palette: palette, needle: needle, scale:scale, pivot: pivot, scaleDomain: scaleDomain, range: range, caption: caption },
+          //{ x: 610, y: 250, r: 40, tick: tick1, palette: palette, needle: needle, scale:scale, pivot: pivot, caption: caption },
+          { x: 810, y: 250, r: 280, pivot: [ 0.10, 0.02 ], scaleDomain: [0, 220], range: [-135, 135],
+            tick: {minor: 5, major: 14, mark: 'line', exact: true},
+            palette: {bg: bgColor, scale:'#2EA0FF', rim: ['#00080F', '#0279DF'], pivot: '#fff', needle: '#fff'},
+            needle: {type: 1, length: 0.75, width: 0.05},
+            scale: { text: {position: 0.875, dy: 0.5, color: '#37A6FE', family: 'SegoeUI', size: 10, scale: 0.005, weight: '100'},
+                    position: {start: 0.71, end: 0.76 }, rim: 0.14},
+            caption: [{text: 209, dy: -1.2, color: '#37A6FE', family: 'SegoeUI', size: 40, scale:0.005, weight: '100'},
+                    {text: 'Speed Score', dy: -0.9, color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: 20, scale: 0.005, weight: '100'}]
+          }
       ];
       var charts = layout.map(function(d) {
-        return NBXDialChart()
+        return OlapDialChart()
           .width(d.r * 2)
           .height(d.r * 2)
           //.margin([ -50, -50, -50, -50 ])
           .scale(d.scale)
-          .domain([0, d.tick.exact ? d.tick.minor * d.tick.major : d.tick.m])
-          .range([-135, 135])
-          .needleParam(d.needle)
+          .scaleDomain(d.scaleDomain)
+          .domain([d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]])
+          .range(d.range)
+          .needle(d.needle)
           .pivot(d.pivot)
           .palette(d.palette)
           .tick(d.tick)
           .caption(d.caption)
           ;
       });
-      //console.log(charts);
-      //console.log(charts[0].width());
-
 
       var svg = d3.select(chartselector)
           .append('svg:svg')
@@ -76,139 +81,31 @@
           .attr('transform', function(d) { return 'translate(' + (d.x - d.r) + ',' + (d.y - d.r) + ')'; } )
           ;
 
-          //console.log(dials);
-
-      dials.each(function(d, i) { d3.select(this).data([70*200/220]).call(charts[i]); });
-
-      // function GradientColorGenerater(svg, colors) {
-      //     if (!svg) return;
-      //     let defs = svg.append("svg:defs");
-      //     let res = [];
-      //     if (Array.isArray(colors)) {
-      //         colors.forEach(function (item, index) {
-      //             let next = colors[index + 1] || colors[0];
-      //             let id = `color_gradient_${index}`;
-      //             let gradient = defs.append("svg:linearGradient")
-      //                 .attr("id", id);
-      //
-      //             gradient.append("svg:stop")
-      //                 .attr("offset", "0%")
-      //                 .attr("stop-color", item.color);
-      //
-      //             gradient.append("svg:stop")
-      //                 .attr("offset", "100%")
-      //                 .attr("stop-color", next.color);
-      //
-      //             res[index] = {
-      //                 gradient:gradient,
-      //                 color: `url(#${id})`,
-      //                 percent: item.percent
-      //             }
-      //         });
-      //     }
-      //     return res;
-      // }
-      //
-      //
-      // svg = d3.select(chartselector).append('svg')
-      //         .attr("width", 300)
-      //         .attr("height", 300)
-      //         .append("g")
-      //         .attr("transform", "translate(150,150)");
-      //
-      // let pie = d3.layout.pie().sort(null);
-      //
-      // let arc = d3.svg.arc().innerRadius(120)
-      // .outerRadius(86)
-      // // .startAngle(-175 * (Math.PI/180)) //converting from degs to radians
-      // // .endAngle(175 * (Math.PI/180)); //just radians
-      // ;
-      //
-      // let colors = GradientColorGenerater(svg, [
-      //     {
-      //         color: "#01E400",
-      //         percent: 1
-      //     },
-      //     {
-      //         color: "#FEFF01",
-      //         percent: 1
-      //     },
-      //     {
-      //         color: "#FF7E00",
-      //         percent: 1
-      //     },
-      //     {
-      //         color: "#FB0300",
-      //         percent: 1
-      //     },
-      //     {
-      //         color: "#9B004A",
-      //         percent: 1
-      //
-      //     },
-      //     {
-      //         color: "#7D0022",
-      //         percent: 1
-      //
-      //     }
-      // ]);
-      //
-      // function pointOfAngle(angle){
-      //     return {
-      //         x:Math.sin(angle),
-      //         y:Math.cos(angle)
-      //     }
-      // }
-      //
-      // let cricle = svg.datum(colors.map((item)=> item.percent))
-      //     .selectAll("path")
-      //     .data(pie)
-      //     .enter()
-      //     .append("path")
-      //     .attr("fill", function (d, i) {
-      //
-      //         let startPoint = pointOfAngle(d.startAngle - Math.PI/2),
-      //             endPoint = pointOfAngle(d.endAngle - Math.PI/2);
-      //
-      //         colors[i].gradient
-      //             .attr('x1',startPoint.x)
-      //             .attr('y1',startPoint.y)
-      //             .attr('x2',endPoint.x)
-      //             .attr('y2',endPoint.y);
-      //         return colors[i].color;
-      //     })
-      //     .attr("d", arc);
-
-
-
+      dials.each(function(d, i) {
+        d3.select(this)
+        .data([ charts[i].domain()[1] * charts[i].caption()[0].text / charts[i].scaleDomain()[1] ])
+        .call(charts[i]);
+      });
 
       window.transition = function() {
-        var newr = Math.random()*200,
-        newr1 = Math.random()*200;
-        layout = [
-          { x: 400, y: 250, r: newr, tick: {m: 220, minor: 5, major: 10, mark: 'line', exact: false}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#b21f24'}, needle:{type: 0}, scale:scale, pivot: pivot   },
-          //{ x: 610, y: 250, r: 40, m: 80, ticks: 2, mark: 'circle', needle:{color:'steelblue'}, scale:scale   },
-           { x: 810, y: 250, r: newr, tick: {m: 220, minor: 5, major: 14, mark: 'line', exact: true}, palette: {bg: bgColor, scale:'#37A6FE', rim:'#37A6FE', pivot: '#fff', needle: '#fff'},
-           needle:{type: 1, needle: [0.75, 0.05]},
-           scale: [ 0.71, 0.875, 0.76, 0.14 ],
-           pivot: [ 0.10, 0.02 ]
-         }
-        ];
+        layout[0].r = Math.random()*200, layout[1].r = Math.random()*200;
         charts = layout.map(function(d) {
-          return NBXDialChart()
+          return OlapDialChart()
             .width(d.r * 2)
             .height(d.r * 2)
-            .domain([0, d.tick.m])
-            .range([-135, 135])
+            .scale(d.scale)
+            .scaleDomain(d.scaleDomain)
+            .domain([d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]])
+            .range(d.range)
+            .needle(d.needle)
+            .pivot(d.pivot)
+            .palette(d.palette)
+            .tick(d.tick)
+            .caption(d.caption)
             ;
         });
-        // charts[0].width = function() { return Math.random()*1000;}
-        //     ;
-            //console.log(charts[0].width());
         svg.selectAll('g.dial').remove();
-
-        var dials = svg.selectAll('g.dial')
-            .data(layout);
+        var dials = svg.selectAll('g.dial').data(layout);
         dials.exit().remove();
         dials.enter()
             .append('svg:g')
@@ -219,25 +116,17 @@
 
         dials.each(function(d, i) {
           d3.select(this)
-            .data([ Math.random() * charts[i].domain()[1] ])
+            .data([ charts[i].domain()[1] * charts[i].caption()[0].text / charts[i].scaleDomain()[1] ])
             .call(charts[i])
             ;
         });
       };
 
-      // d3.select("#my")
-      //   .append('svg:svg')
-      //   .append("rect")
-      //     .attr('width', 50)
-      //     .attr('height', 200)
-      //     .style("fill", "#666");
-
-
     })('#chart');
 
   </script>
   <div style="margin-left: 600px;background-color: #000;">
-  <img src="download.png" width="400" style="padding: 20px 20px" />
+  <img src="download.png"  style="padding: 20px 20px" />
   </div>
 </body>
 </html>
