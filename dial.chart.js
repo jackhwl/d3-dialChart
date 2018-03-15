@@ -41,7 +41,7 @@ OlapDialChart = function() {
         drawCaption(g, r);
         createDefs(g.append('svg:defs'), 0,0,0.5,1);
         drawRim(a(d), g.append('svg:g').attr('class', 'rim'), r);
-        drawScale(a, g, r);
+        drawScale(a, g.append('svg:g').attr('class', 'scale'), r);
         drawGlare(g, r);
         drawNeedle(a, g, r);
 
@@ -274,15 +274,13 @@ OlapDialChart = function() {
   }
 
   function drawGlare(g, r) {
-    if (needle.type===0) {
-      // gradient on top panel
-      var rdial3 = r * dial[3];
-      g.append('svg:path')
-        .attr('class', 'dial-glare')
-        .attr('d', 'M ' + (-rdial3) + ',0 A' + rdial3 + ',' + rdial3 + ' 0 0,1 ' + rdial3 + ',0 A' + (rdial3 * 5) + ',' + (rdial3 * 5) + ' 0 0,0 ' + (-rdial3) + ',0')
-        .style('fill', 'url(#glareGradient)')
-        ;
-    }
+    // gradient on top panel
+    var rdial3 = r * dial[3];
+    g.append('svg:path')
+      .attr('class', 'dial-glare')
+      .attr('d', 'M ' + (-rdial3) + ',0 A' + rdial3 + ',' + rdial3 + ' 0 0,1 ' + rdial3 + ',0 A' + (rdial3 * 5) + ',' + (rdial3 * 5) + ' 0 0,0 ' + (-rdial3) + ',0')
+      .style('fill', 'url(#glareGradient)')
+      ;
   }
 
   function createDefs(defs, x1, y1, x2, y2) {
@@ -546,6 +544,12 @@ OlapDialChart = function() {
   dialchart.height = function(d) {
     if (!arguments.length) return h;
     h = d;
+    return dialchart;
+  };
+
+  dialchart.dial = function(d) {
+    if (!arguments.length) return dial;
+    dial = d;
     return dialchart;
   };
 
