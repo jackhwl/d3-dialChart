@@ -20,7 +20,7 @@
 
       var w = 1260,
           h = 500,
-          bgColor = '#000',
+          bgColor = '#031732',
           dial = [ 1.00, 0.95, 0.92, 0.85 ],
           tick = {minor: 5, major: 10, mark: 'line', exact: false},
           tick1 = {minor: 5, major: 10, mark: 'circle', exact: false},
@@ -30,29 +30,29 @@
           pivot= [ 0.10, 0.05 ],
           scaleDomain= [0, 220],
           range= [-135, 135],
-          palette = {bg: bgColor, scale:'#37A6FE', rim:['#031835', '#0279DF'], pivot: '#fff', needle: '#b21f24'},
+          palette = {bg: bgColor, scale:'#37A6FE', rim:['#031732', '#0279DF'], pivot: '#fff', needle: '#b21f24'},
           caption= [{text: 200, dy: -1.2, color: '#37A6FE', family: 'Arial', size: 50, scale: 0.01, weight: 'normal'},
                   {text: 'Speed Score', dy: -0.9, color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: 20, scale:0.01, weight: '100'}]
           ;
 
       var layout = [
         //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
-          { x: 400, y: 250, r: 180, dial: dial, tick: tick, palette: palette, needle: needle, scale:scale, pivot: pivot, scaleDomain: scaleDomain, range: range, caption: caption },
+        //  { x: 400, y: 250, r: 180, dial: dial, tick: tick, palette: palette, needle: needle, scale:scale, pivot: pivot, scaleDomain: scaleDomain, range: range, caption: caption },
           //{ x: 610, y: 250, r: 40, tick: tick1, palette: palette, needle: needle, scale:scale, pivot: pivot, caption: caption },
           { x: 810, y: 250, r: 280, pivot: [ 0.10, 0.02 ], scaleDomain: [0, 220], range: [-135, 135],
             tick: {minor: 5, major: 14, mark: 'line', exact: true},
-            palette: {bg: bgColor, scale:'#2EA0FF', rim: ['#00080F', '#0279DF'], pivot: '#fff', needle: '#fff'},
+            palette: {bg: bgColor, scale:'#2EA0FF', rim: ['#031732', '#0279DF'], pivot: '#fff', needle: '#fff'},
             needle: {type: 1, length: 0.75, width: 0.05},
             dial: [ 1.00, 0.95, 0.92, 0.61*0 ],
             scale: { text: {position: 0.875, dy: 0.5, color: '#125EA3', family: 'SegoeUI', size: 10, scale: 0.005, weight: '100'},
                     position: {start: 0.71, end: 0.76 }, rim: 0.14},
-            caption: [{text: 209, dy: -1.2, color: '#125EA3', family: 'SegoeUI', size: 40, scale:0.005, weight: '100'},
-                    {text: 'Speed Score', dy: -1.4, color: '#125EA3', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: 15, scale: 0.005, weight: '100'}]
+            caption: [{text: 209, dy: -1.2, color: '#0279DF', family: 'SegoeUI', size: 40, scale:0.005, weight: '100'},
+                    {text: 'Speed Score', dy: -1.4, color: '#0279DF', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: 15, scale: 0.005, weight: '100'}]
           }
       ];
 
       var charts = layout.map(function(d) {
-        return OlapDialChart()
+        return olapDialChart()
           .width(d.r * 2)
           .height(d.r * 2)
           //.margin([ -50, -50, -50, -50 ])
@@ -92,9 +92,10 @@
       });
 
       window.transition = function() {
-        layout[0].r = Math.random()*200, layout[1].r = Math.random()*200;
+        //layout[0].r = Math.random()*200,
+        layout[0].r = Math.random()*200;
         charts = layout.map(function(d) {
-          return OlapDialChart()
+          return olapDialChart()
             .width(d.r * 2)
             .height(d.r * 2)
             .dial(d.dial)

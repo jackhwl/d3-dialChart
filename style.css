@@ -11,6 +11,17 @@
   fill: steelblue;
 } */
 
+@font-face {
+    font-family: SegoeUI;
+    src: url('./latest_sl.ttf');
+}
+
+@font-face {
+    font-family: webly;
+    src: url('./weblysleekuisb.ttf');
+}
+
+
 circle.label {
   fill: white;
 }

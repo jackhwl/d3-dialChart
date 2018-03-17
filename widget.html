@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>dials</title>
+    <style>
+      #example {
+        margin-left: -20px;
+      }
+
+      .line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 1.5px;
+      }
+
+      .area {
+        fill: #969696;
+      }
+
+      .attention {
+        background: yellow;
+        margin: -4px;
+        padding: 4px;
+      }
+
+    </style>
+    <script src="d3.min.js" charset="utf-8"></script>
+    <script src="time-series-chart.js"></script>
+  </head>
+<body>
+  https://www.cozero.com.au/news/2017/building-new-models-for-nvd3_nl.html
+https://medium.com/the-web-tub/integrate-charts-in-your-angularjs-hybrid-apps-with-nvd3-3ea79537eaa9
+  <div id="example">
+  </div>
+  <script>
+    d3.csv("sp500.csv", function(data) {
+      var formatDate = d3.time.format("%b %Y");
+
+      d3.select("#example")
+          .datum(data)
+          .call(timeSeriesChart()
+          .x(function(d) { return formatDate.parse(d.date); })
+          .y(function(d) { return +d.price; }));
+    });
+  </script>
+  </div>
+</body>
+</html>
