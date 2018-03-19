@@ -28,24 +28,45 @@
 
     var width = 960,
         height = 80,
+        bgColor = '#031732',
         margin = {top: 5, right: 40, bottom: 20, left: 120};
 
-    var chart = nv.models.bulletChart()
+    var chart = nv.models.dialChart()
             .width(width - margin.right - margin.left)
-            .height(height - margin.top - margin.bottom);
+            .height(height - margin.top - margin.bottom)
+            ;
     console.log(chart.width());
+    //console.log(chart.pivot);
 
     data = [
-        {"title":"Revenue","subtitle":"US$, in thousands","ranges":[150,225,300],"measures":[220],"markers":[250],"markerLines":[270]},
-        {"title":"Order Size","subtitle":"US$, average","ranges":[350,500,600],"measures":[100],"markers":[550], "markerLines":[530]},
-        {"title":"Satisfaction","subtitle":"out of 5","ranges":[3.5,4.25,5],"measures":[3.2,4.7],"markers":[4.4], "markerLines":[3.8]}
+        // {"title":"Revenue","subtitle":"US$, in thousands","ranges":[150,225,300],"measures":[220],"markers":[250],"markerLines":[270]},
+        // {"title":"Order Size","subtitle":"US$, average","ranges":[350,500,600],"measures":[100],"markers":[550], "markerLines":[530]
+        //   ,pivot: [ 0.20, 0.202 ]
+        // },
+        {"title":"Satisfaction","subtitle":"out of 5","ranges":[3.5,4.25,5],"measures":[3.2,4.7],"markers":[4.4], "markerLines":[3.8]
+          ,pivot: [ 0.10, 0.02 ]
+          ,x: 810
+          ,y: 250
+          ,r: 280
+          ,range: [-135, 135]
+          ,scaleDomain: [0, 220]
+          ,tick: {minor: 5, major: 14, mark: 'line', exact: true}
+          ,palette: {bg: bgColor, scale:'#2EA0FF', rim: ['#031732', '#0279DF'], pivot: '#fff', needle: '#fff'}
+          ,scale: { dial: {outer: 1.00,  middle: 0.95, inner: 0.92, dash: 0.61*0 },
+                  text: {position: 0.875, dy: 0.5, color: '#125EA3', family: 'SegoeUI', size: 10, scale: 0.005, weight: '100'},
+                  position: {start: 0.71, end: 0.76 }, rim: 0.14}
+          ,needle: {type: 321, length: 30.75, width: 40.05}
+          ,caption: [{text: 209, dy: -1.2, color: '#37A6FE', family: 'SegoeUI', size: 40, scale:0.005, weight: '100'},
+                    {text: 'Speed Score', dy: -0.9, color: '#37A6FE', family: "SegoeUI,'Helvetica Neue',Helvetica,Arial,sans-serif", size: 20, scale: 0.005, weight: '100'}]
+
+        }
     ];
 
     //TODO: to be consistent with other models, should be appending a g to an already made svg, not creating the svg element
     var vis = d3.select("#chart").selectAll("svg")
         .data(data)
         .enter().append("svg")
-        .attr("class", "bullet nvd3")
+        .attr("class", "dial nvd3")
         .attr("width", width)
         .attr("height", height);
 
@@ -58,8 +79,6 @@
     function randomize(d) {
         if (!d.randomizer) d.randomizer = randomizer(d);
         d.ranges = d.ranges.map(d.randomizer);
-        d.markers = d.markers.map(d.randomizer);
-        d.markerLines = d.markerLines.map(d.randomizer);
         d.measures = d.measures.map(d.randomizer);
         return d;
     }

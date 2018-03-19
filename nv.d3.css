@@ -131,6 +131,29 @@
     fill-opacity: .7;
 }
 
+/* dial */
+.nvd3.nv-dial { font: 10px sans-serif; }
+.nvd3.nv-dial .nv-measure { fill-opacity: .8; }
+.nvd3.nv-dial .nv-measure:hover { fill-opacity: 1; }
+.nvd3.nv-dial .nv-marker { stroke: #000; stroke-width: 2px; }
+.nvd3.nv-dial .nv-markerTriangle { stroke: #000; fill: #fff; stroke-width: 1.5px; }
+.nvd3.nv-dial .nv-markerLine { stroke: #000; stroke-width: 1.5px; }
+.nvd3.nv-dial .nv-tick line { stroke: #666; stroke-width: .5px; }
+.nvd3.nv-dial .nv-range.nv-s0 { fill: #eee; }
+.nvd3.nv-dial .nv-range.nv-s1 { fill: #ddd; }
+.nvd3.nv-dial .nv-range.nv-s2 { fill: #ccc; }
+.nvd3.nv-dial .nv-title { font-size: 14px; font-weight: bold; }
+.nvd3.nv-dial .nv-subtitle { fill: #999; }
+
+.nvd3.nv-dial .nv-range {
+    fill: #bababa;
+    fill-opacity: .4;
+}
+
+.nvd3.nv-dial .nv-range:hover {
+    fill-opacity: .7;
+}
+
 .nvd3.nv-candlestickBar .nv-ticks .nv-tick {
     stroke-width: 1px;
 }

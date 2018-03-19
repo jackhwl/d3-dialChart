@@ -111,16 +111,16 @@ olapDialChart = function() {
         } else {
           //face
           g.append('svg:circle')
-            .attr('r', r * dial[0])
+            .attr('r', r * scale.dial.outer)
             .style('fill', 'url(#outerGradient)')
             .attr('filter', 'url(#dropShadow)');
 
           g.append('svg:circle')
-            .attr('r', r * dial[1])
+            .attr('r', r * scale.dial.middle)
             .style('fill', 'url(#innerGradient)');
 
           g.append('svg:circle')
-            .attr('r', r * dial[2])
+            .attr('r', r * scale.dial.inner)
             .style('fill', 'url(#faceGradient)');
         }
 
@@ -273,7 +273,7 @@ olapDialChart = function() {
 
     function drawGlare(g, r) {
       // gradient on top panel
-      var rdial3 = r * dial[3];
+      var rdial3 = r * scale.dial.dash;
       g.append('svg:path')
         .attr('class', 'dial-glare')
         .attr('d', 'M ' + (-rdial3) + ',0 A' + rdial3 + ',' + rdial3 + ' 0 0,1 ' + rdial3 + ',0 A' + (rdial3 * 5) + ',' + (rdial3 * 5) + ' 0 0,0 ' + (-rdial3) + ',0')
