@@ -1352,7 +1352,9 @@ nv.utils.initOption = function(chart, name) {
         chart[name] = chart._calls[name];
     } else {
         chart[name] = function (_) {
+            //console.log(arguments.length);
             if (!arguments.length) return chart._options[name];
+            //console.log('22');
             chart._overrides[name] = true;
             chart._options[name] = _;
             return chart;
@@ -2675,7 +2677,7 @@ nv.models.bullet = function() {
 
             wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-             var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
+            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
                 w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
             var xp0 = function(d) { return d < 0 ? x0(d) : x0(0) },
                 xp1 = function(d) { return d < 0 ? x1(d) : x1(0) };
@@ -2691,41 +2693,39 @@ nv.models.bullet = function() {
                     .attr('x', xp1(range))
             }
 
-
-
-           //  g.select('rect.nv-measure')
-           //      .style('fill', color)
-           //      .attr('height', availableHeight / 3)
-           //      .attr('y', availableHeight / 3)
-           //      .on('mouseover', function() {
-           //          dispatch.elementMouseover({
-           //              value: measurez[0],
-           //              label: measureLabelz[0] || 'Current',
-           //              color: d3.select(this).style("fill")
-           //          })
-           //      })
-           //      .on('mousemove', function() {
-           //          dispatch.elementMousemove({
-           //              value: measurez[0],
-           //              label: measureLabelz[0] || 'Current',
-           //              color: d3.select(this).style("fill")
-           //          })
-           //      })
-           //      .on('mouseout', function() {
-           //          dispatch.elementMouseout({
-           //              value: measurez[0],
-           //              label: measureLabelz[0] || 'Current',
-           //              color: d3.select(this).style("fill")
-           //          })
-           //      })
-           //      .transition()
-           //      .duration(duration)
-           //      .attr('width', measurez < 0 ?
-           //          x1(0) - x1(measurez[0])
-           //          : x1(measurez[0]) - x1(0))
-           //      .attr('x', xp1(measurez));
-           //
-           // var h3 =  availableHeight / 6;
+            // g.select('rect.nv-measure')
+            //     .style('fill', color)
+            //     .attr('height', availableHeight / 3)
+            //     .attr('y', availableHeight / 3)
+            //     .on('mouseover', function() {
+            //         dispatch.elementMouseover({
+            //             value: measurez[0],
+            //             label: measureLabelz[0] || 'Current',
+            //             color: d3.select(this).style("fill")
+            //         })
+            //     })
+            //     .on('mousemove', function() {
+            //         dispatch.elementMousemove({
+            //             value: measurez[0],
+            //             label: measureLabelz[0] || 'Current',
+            //             color: d3.select(this).style("fill")
+            //         })
+            //     })
+            //     .on('mouseout', function() {
+            //         dispatch.elementMouseout({
+            //             value: measurez[0],
+            //             label: measureLabelz[0] || 'Current',
+            //             color: d3.select(this).style("fill")
+            //         })
+            //     })
+            //     .transition()
+            //     .duration(duration)
+            //     .attr('width', measurez < 0 ?
+            //         x1(0) - x1(measurez[0])
+            //         : x1(measurez[0]) - x1(0))
+            //     .attr('x', xp1(measurez));
+            //
+            // var h3 =  availableHeight / 6;
 
             // var markerData = markerz.map( function(marker, index) {
             //     return {value: marker, label: markerLabelz[index]}

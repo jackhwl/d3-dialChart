@@ -33,6 +33,7 @@
     var chart = nv.models.bulletChart()
             .width(width - margin.right - margin.left)
             .height(height - margin.top - margin.bottom);
+    console.log(chart.width());
 
     data = [
         {"title":"Revenue","subtitle":"US$, in thousands","ranges":[150,225,300],"measures":[220],"markers":[250],"markerLines":[270]},
