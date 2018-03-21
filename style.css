@@ -13,7 +13,10 @@
 
 @font-face {
     font-family: SegoeUI;
-    src: url('./latest_sl.ttf');
+    src: url('../latest_sl.eot?#iefix') format('embedded-opentype');
+    src: url('./latest_sl.woff2') format("woff2");
+    src: url('./latest_sl.woff') format("woff");
+    src: url('./latest_sl.ttf') format("truetype");
 }
 
 @font-face {

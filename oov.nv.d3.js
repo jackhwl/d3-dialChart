@@ -1352,7 +1352,9 @@ nv.utils.initOption = function(chart, name) {
         chart[name] = chart._calls[name];
     } else {
         chart[name] = function (_) {
+            //console.log(arguments.length);
             if (!arguments.length) return chart._options[name];
+            //console.log('22');
             chart._overrides[name] = true;
             chart._options[name] = _;
             return chart;
@@ -2567,370 +2569,6 @@ nv.models.boxPlotChart = function() {
     return chart;
 }
 
-
-nv.models.dial = function() {
-    "use strict";
-
-    //============================================================
-    // Public Variables with Default Settings
-    //------------------------------------------------------------
-
-    var margin = {top: 0, right: 0, bottom: 0, left: 0}
-        , bgColor = '#031732'
-        , ranges = function(d) { return d.ranges }
-        , measures = function(d) { return d.measures }
-        , rangeLabels = function(d) { return d.rangeLabels ? d.rangeLabels : [] }
-        , measureLabels = function(d) { return d.measureLabels ? d.measureLabels : []  }
-        , forceX = [0] // List of numbers to Force into the X scale (ie. 0, or a max / min, etc.)
-        , width = 380
-        , height = 30
-        , container = null
-        , tickFormat = null
-        , color = nv.utils.getColor(['#1f77b4'])
-        , defaultRangeLabels = ["Maximum", "Mean", "Minimum"]
-        , legacyRangeClassNames = ["Max", "Avg", "Min"]
-        , duration = 1000
-        , needle = {type: 1, length: 0.75, width: 0.05}
-        , tick = {minor: 5, major: 14, mark: 'line', exact: true}
-        , palette = {bg: bgColor, scale:'#2EA0FF', rim: ['#031732', '#0279DF'], pivot: '#fff', needle: '#fff'}
-        , scale = { dial: {outer: 1.00,  middle: 0.95, inner: 0.92, dash: 0.61*0 },
-                text: {position: 0.875, dy: 0.5, color: '#125EA3', family: 'SegoeUI', size: 10, scale: 0.005, weight: '100'},
-                position: {start: 0.71, end: 0.76 }, rim: 0.14}
-        , x = 810
-        , y = 250
-        , r = 280
-        , range =  function(d) { return d.range }
-        , scaleDomain =  function(d) { return d.scaleDomain }
-        , caption =  function(d) { return d.caption }
-        , pivot =  function(d) { return d.pivot }
-        ;
-
-    function chart(selection) {
-        selection.each(function(d, i) {
-            var availableWidth = width - margin.left - margin.right,
-                availableHeight = height - margin.top - margin.bottom;
-
-            container = d3.select(this);
-            nv.utils.initSVG(container);
-
-            var rangez = ranges.call(this, d, i).slice(),
-                measurez = measures.call(this, d, i).slice(),
-                rangeLabelz = rangeLabels.call(this, d, i).slice(),
-                measureLabelz = measureLabels.call(this, d, i).slice();
-
-            // Setup Scales
-            // Compute the new x-scale.
-            var x1 = d3.scale.linear()
-                .domain( d3.extent(d3.merge([forceX, rangez])) )
-                .range([0, availableWidth]);
-
-            // Retrieve the old x-scale, if this is an update.
-            var x0 = this.__chart__ || d3.scale.linear()
-                .domain([0, Infinity])
-                .range(x1.range());
-
-            // Stash the new scale.
-            this.__chart__ = x1;
-
-            var rangeMin = d3.min(rangez), //rangez[2]
-                rangeMax = d3.max(rangez), //rangez[0]
-                rangeAvg = rangez[1];
-
-            // Setup containers and skeleton of chart
-            var wrap = container.selectAll('g.nv-wrap.nv-dial').data([d]);
-            var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dial');
-            var gEnter = wrapEnter.append('g');
-            var g = wrap.select('g');
-
-            for(var i=0,il=rangez.length; i<il; i++){
-                var rangeClassNames = 'nv-range nv-range'+i;
-                if(i <= 2){
-                    rangeClassNames = rangeClassNames + ' nv-range'+legacyRangeClassNames[i];
-                }
-                gEnter.append('rect').attr('class', rangeClassNames);
-            }
-
-            gEnter.append('rect').attr('class', 'nv-measure');
-
-            wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
-                w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
-            var xp0 = function(d) { return d < 0 ? x0(d) : x0(0) },
-                xp1 = function(d) { return d < 0 ? x1(d) : x1(0) };
-
-            for(var i=0,il=rangez.length; i<il; i++){
-                var range = rangez[i];
-                g.select('rect.nv-range'+i)
-                    .datum(range)
-                    .attr('height', availableHeight)
-                    .transition()
-                    .duration(duration)
-                    .attr('width', w1(range))
-                    .attr('x', xp1(range))
-            }
-
-            var wm = width - margin.right - margin.left, // m[1] - m[3],
-                hm = height - margin.top - margin.bottom , //m[0] - m[2],
-                calDomain = [d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]],
-                a = d3.scale.linear().domain(calDomain).range(d.range);
-
-            var r = Math.min(wm / 2, hm / 2);
-
-            var g = d3.select(this).select('g');
-            //
-            // //if (g.empty()) {
-            //
-              g = d3.select(this).append('svg:g')
-                .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
-
-              var y2 = needle.type===1 ? -r * needle.length:0;
-
-            drawCaption(g,300);
-
-            function drawCaption(g, r) {
-              if (d.needle.type>0) {
-                g.selectAll('text')
-                  .data(d.caption)
-                  .enter().append('svg:text')
-                  .text(function(d){return d.text})
-                  .attr({
-                    'dx': function(d){return 0},
-                    'dy': function(d){return d.dy + 'em' },
-                    'style': function(d){return 'font-family: '+d.family+';font-size: '+(r * d.size * d.scale)+'px;font-weight: '+d.weight+';fill: '+d.color+';alignment-baseline: middle;text-anchor: middle;'}
-                  })
-                  ;
-              }
-            }
-
-        });
-
-        return chart;
-    }
-
-    //============================================================
-    // Expose Public Variables
-    //------------------------------------------------------------
-
-    chart.options = nv.utils.optionsFunc.bind(chart);
-
-    chart._options = Object.create({}, {
-        // simple options, just get/set the necessary values
-        ranges:      {get: function(){return ranges;}, set: function(_){ranges=_;}}, // ranges (bad, satisfactory, good)
-        measures: {get: function(){return measures;}, set: function(_){measures=_;}}, // measures (actual, forecast)
-        forceX:      {get: function(){return forceX;}, set: function(_){forceX=_;}},
-        width:    {get: function(){return width;}, set: function(_){width=_;}},
-        height:    {get: function(){return height;}, set: function(_){height=_;}},
-        tickFormat:    {get: function(){return tickFormat;}, set: function(_){tickFormat=_;}},
-        duration:    {get: function(){return duration;}, set: function(_){duration=_;}},
-
-        x:    {get: function(){return x;}, set: function(_){x=_;}},
-        y:    {get: function(){return y;}, set: function(_){y=_;}},
-        r:    {get: function(){return r;}, set: function(_){r=_;}},
-        domain:    {get: function(){return domain;}, set: function(_){domain=_;}},
-        scaleDomain:    {get: function(){return scaleDomain;}, set: function(_){scaleDomain=_;}},
-        range:    {get: function(){return range;}, set: function(_){range=_;}},
-        pivot:    {get: function(){return pivot;}, set: function(_){pivot=_;}},
-        caption: {get: function(){return caption;}, set: function(_){caption=_;}},
-
-        // options that require extra logic in the setter
-        margin: {get: function(){return margin;}, set: function(_){
-            margin.top    = _.top    !== undefined ? _.top    : margin.top;
-            margin.right  = _.right  !== undefined ? _.right  : margin.right;
-            margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
-            margin.left   = _.left   !== undefined ? _.left   : margin.left;
-        }},
-        needle:    {get: function(){return needle;}, set: function(_){
-          needle.type    = _.type    !== undefined ? _.type    : needle.type;
-          needle.length    = _.length    !== undefined ? _.length    : needle.length;
-          needle.width    = _.width    !== undefined ? _.width    : needle.width;
-        }},
-        color:  {get: function(){return color;}, set: function(_){
-            color = nv.utils.getColor(_);
-        }},
-        tick: {get: function(){return tick;}, set: function(_){
-          tick.minor    = _.minor    !== undefined ? _.minor    : tick.minor;
-          tick.major    = _.major    !== undefined ? _.major    : tick.major;
-          tick.mark    = _.mark    !== undefined ? _.mark    : tick.mark;
-          tick.exact    = _.exact    !== undefined ? _.exact    : tick.exact;
-        }},
-        palette:    {get: function(){return palette;}, set: function(_){
-          palette.bg    = _.bg    !== undefined ? _.bg    : palette.bg;
-          palette.scale    = _.scale    !== undefined ? _.scale    : palette.scale;
-          palette.rim    = _.rim    !== undefined ? _.rim    : palette.rim;
-          palette.pivot    = _.pivot    !== undefined ? _.pivot    : palette.pivot;
-          palette.needle    = _.needle    !== undefined ? _.needle    : palette.needle;
-        }},
-        scale:    {get: function(){return scale;}, set: function(_){
-          scale.dial    = _.dial    !== undefined ? _.dial    : scale.dial;
-          scale.text    = _.text    !== undefined ? _.text    : scale.text;
-          scale.position    = _.position    !== undefined ? _.position    : scale.position;
-          scale.rim    = _.rim    !== undefined ? _.rim    : scale.rim;
-        }},
-
-    });
-
-    nv.utils.initOptions(chart);
-    return chart;
-};
-
-nv.models.dialChart = function() {
-    "use strict";
-
-    //============================================================
-    // Public Variables with Default Settings
-    //------------------------------------------------------------
-
-    var dial = nv.models.dial();
-
-    var margin = {top: 5, right: 40, bottom: 20, left: 120}
-        , ranges = function(d) { return d.ranges }
-        , measures = function(d) { return d.measures }
-        , width = null
-        , height = 55
-        , tickFormat = null
-        , ticks = null
-        , noData = null
-        , needle = {type: 1, length: 0.75, width: 0.05}
-        , pivot =  function(d) { return d.pivot }
-        , caption =  function(d) { return d.caption }
-        ;
-
-    function chart(selection) {
-        selection.each(function(d, i) {
-            var container = d3.select(this);
-            nv.utils.initSVG(container);
-
-            var availableWidth = nv.utils.availableWidth(width, container, margin),
-                availableHeight = height - margin.top - margin.bottom,
-                that = this;
-
-            chart.update = function() { chart(selection) };
-            chart.container = this;
-
-            var rangez = ranges.call(this, d, i).slice().sort(d3.descending),
-                measurez = measures.call(this, d, i).slice().sort(d3.descending);
-
-            // Setup containers and skeleton of chart
-            var wrap = container.selectAll('g.nv-wrap.nv-dialChart').data([d]);
-            var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dialChart');
-            var gEnter = wrapEnter.append('g');
-            var g = wrap.select('g');
-
-            gEnter.append('g').attr('class', 'nv-dialWrap');
-            //gEnter.append('g').attr('class', 'nv-titles');
-
-            wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-            // Compute the new x-scale.
-            // var x1 = d3.scale.linear()
-            //     .domain([0, Math.max(rangez[0], measurez[0])])  // TODO: need to allow forceX and forceY, and xDomain, yDomain
-            //     .range([0, availableWidth]);
-
-            // Retrieve the old x-scale, if this is an update.
-            // var x0 = this.__chart__ || d3.scale.linear()
-            //     .domain([0, Infinity])
-            //     .range(x1.range());
-
-            // Stash the new scale.
-            //this.__chart__ = x1;
-
-            // var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
-            //     w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
-            //
-            // var title = gEnter.select('.nv-titles').append('g')
-            //     .attr('text-anchor', 'end')
-            //     .attr('transform', 'translate(-6,' + (height - margin.top - margin.bottom) / 2 + ')');
-            // title.append('text')
-            //     .attr('class', 'nv-title')
-            //     .text(function(d) { return d.title; });
-            //
-            // title.append('text')
-            //     .attr('class', 'nv-subtitle')
-            //     .attr('dy', '1em')
-            //     .text(function(d) { return d.subtitle; });
-
-            dial
-                .width(availableWidth)
-                .height(availableHeight);
-
-            var dialWrap = g.select('.nv-dialWrap');
-            d3.transition(dialWrap).call(dial);
-
-        });
-
-        d3.timer.flush();
-        return chart;
-    }
-
-    //============================================================
-    // Expose Public Variables
-    //------------------------------------------------------------
-
-    chart.dial = dial;
-
-    chart.options = nv.utils.optionsFunc.bind(chart);
-
-    chart._options = Object.create({}, {
-        // simple options, just get/set the necessary values
-        ranges:      {get: function(){return ranges;}, set: function(_){ranges=_;}}, // ranges (bad, satisfactory, good)
-        measures: {get: function(){return measures;}, set: function(_){measures=_;}}, // measures (actual, forecast)
-        width:    {get: function(){return width;}, set: function(_){width=_;}},
-        height:    {get: function(){return height;}, set: function(_){height=_;}},
-        tickFormat:    {get: function(){return tickFormat;}, set: function(_){tickFormat=_;}},
-        ticks:    {get: function(){return ticks;}, set: function(_){ticks=_;}},
-        noData:    {get: function(){return noData;}, set: function(_){noData=_;}},
-
-        x:    {get: function(){return x;}, set: function(_){x=_;}},
-        y:    {get: function(){return y;}, set: function(_){y=_;}},
-        r:    {get: function(){return r;}, set: function(_){r=_;}},
-        domain:    {get: function(){return domain;}, set: function(_){domain=_;}},
-        scaleDomain:    {get: function(){return scaleDomain;}, set: function(_){scaleDomain=_;}},
-        range:    {get: function(){return range;}, set: function(_){range=_;}},
-        pivot:    {get: function(){return pivot;}, set: function(_){pivot=_;}},
-        caption: {get: function(){return caption;}, set: function(_){caption=_;}},
-
-        // options that require extra logic in the setter
-        margin: {get: function(){return margin;}, set: function(_){
-            margin.top    = _.top    !== undefined ? _.top    : margin.top;
-            margin.right  = _.right  !== undefined ? _.right  : margin.right;
-            margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
-            margin.left   = _.left   !== undefined ? _.left   : margin.left;
-        }},
-        needle:    {get: function(){return needle;}, set: function(_){
-          needle.type    = _.type    !== undefined ? _.type    : needle.type;
-          needle.length    = _.length    !== undefined ? _.length    : needle.length;
-          needle.width    = _.width    !== undefined ? _.width    : needle.width;
-        }},
-        tick:    {get: function(){return tick;}, set: function(_){
-          tick.minor    = _.minor    !== undefined ? _.minor    : tick.minor;
-          tick.major    = _.major    !== undefined ? _.major    : tick.major;
-          tick.mark    = _.mark    !== undefined ? _.mark    : tick.mark;
-          tick.exact    = _.exact    !== undefined ? _.exact    : tick.exact;
-        }},
-        palette:    {get: function(){return palette;}, set: function(_){
-          palette.bg    = _.bg    !== undefined ? _.bg    : palette.bg;
-          palette.scale    = _.scale    !== undefined ? _.scale    : palette.scale;
-          palette.rim    = _.rim    !== undefined ? _.rim    : palette.rim;
-          palette.pivot    = _.pivot    !== undefined ? _.pivot    : palette.pivot;
-          palette.needle    = _.needle    !== undefined ? _.needle    : palette.needle;
-        }},
-        scale:    {get: function(){return scale;}, set: function(_){
-          scale.dial    = _.dial    !== undefined ? _.dial    : scale.dial;
-          scale.text    = _.text    !== undefined ? _.text    : scale.text;
-          scale.position    = _.position    !== undefined ? _.position    : scale.position;
-          scale.rim    = _.rim    !== undefined ? _.rim    : scale.rim;
-        }},
-    });
-
-    nv.utils.inheritOptions(chart, dial);
-    nv.utils.initOptions(chart);
-
-    return chart;
-};
-
-
-
 // Chart design based on the recommendations of Stephen Few. Implementation
 // based on the work of Clint Ivy, Jamie Love, and Jason Davies.
 // http://projects.instantcognition.com/protovis/bulletchart/
@@ -3457,6 +3095,374 @@ nv.models.bulletChart = function() {
     return chart;
 };
 
+// Dial Chart for olapvision
+
+nv.models.dial = function() {
+    "use strict";
+
+    //============================================================
+    // Public Variables with Default Settings
+    //------------------------------------------------------------
+
+    var margin = {top: 0, right: 0, bottom: 0, left: 0}
+        , bgColor = '#031732'
+        , ranges = function(d) { return d.ranges }
+        , measures = function(d) { return d.measures }
+        , rangeLabels = function(d) { return d.rangeLabels ? d.rangeLabels : [] }
+        , measureLabels = function(d) { return d.measureLabels ? d.measureLabels : []  }
+        , forceX = [0] // List of numbers to Force into the X scale (ie. 0, or a max / min, etc.)
+        , width = 380
+        , height = 30
+        , container = null
+        , tickFormat = null
+        , color = nv.utils.getColor(['#1f77b4'])
+        , defaultRangeLabels = ["Maximum", "Mean", "Minimum"]
+        , legacyRangeClassNames = ["Max", "Avg", "Min"]
+        , duration = 1000
+        , needle = {type: 1, length: 0.75, width: 0.05}
+        , tick = {minor: 5, major: 14, mark: 'line', exact: true}
+        , palette = {bg: bgColor, scale:'#2EA0FF', rim: ['#031732', '#0279DF'], pivot: '#fff', needle: '#fff'}
+        , scale = { dial: {outer: 1.00,  middle: 0.95, inner: 0.92, dash: 0.61*0 },
+                text: {position: 0.875, dy: 0.5, color: '#125EA3', family: 'SegoeUI', size: 10, scale: 0.005, weight: '100'},
+                position: {start: 0.71, end: 0.76 }, rim: 0.14}
+        , x = 810
+        , y = 250
+        , r = 280
+        , range =  function(d) { return d.range }
+        , scaleDomain =  function(d) { return d.scaleDomain }
+        , caption =  function(d) { return d.caption }
+        , pivot =  function(d) { return d.pivot }
+        ;
+
+    function chart(selection) {
+        selection.each(function(d, i) {
+            var availableWidth = width - margin.left - margin.right,
+                availableHeight = height - margin.top - margin.bottom;
+
+            container = d3.select(this);
+            nv.utils.initSVG(container);
+
+            var rangez = ranges.call(this, d, i).slice(),
+                measurez = measures.call(this, d, i).slice(),
+                rangeLabelz = rangeLabels.call(this, d, i).slice(),
+                measureLabelz = measureLabels.call(this, d, i).slice();
+
+            // Setup Scales
+            // Compute the new x-scale.
+            var x1 = d3.scale.linear()
+                .domain( d3.extent(d3.merge([forceX, rangez])) )
+                .range([0, availableWidth]);
+
+            // Retrieve the old x-scale, if this is an update.
+            var x0 = this.__chart__ || d3.scale.linear()
+                .domain([0, Infinity])
+                .range(x1.range());
+
+            // Stash the new scale.
+            this.__chart__ = x1;
+
+            var rangeMin = d3.min(rangez), //rangez[2]
+                rangeMax = d3.max(rangez), //rangez[0]
+                rangeAvg = rangez[1];
+
+            // Setup containers and skeleton of chart
+            var wrap = container.selectAll('g.nv-wrap.nv-dial').data([d]);
+            var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dial');
+            var gEnter = wrapEnter.append('g');
+            var g = wrap.select('g');
+
+            for(var i=0,il=rangez.length; i<il; i++){
+                var rangeClassNames = 'nv-range nv-range'+i;
+                if(i <= 2){
+                    rangeClassNames = rangeClassNames + ' nv-range'+legacyRangeClassNames[i];
+                }
+                gEnter.append('rect').attr('class', rangeClassNames);
+            }
+
+            gEnter.append('rect').attr('class', 'nv-measure');
+
+            wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
+                w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
+            var xp0 = function(d) { return d < 0 ? x0(d) : x0(0) },
+                xp1 = function(d) { return d < 0 ? x1(d) : x1(0) };
+
+            for(var i=0,il=rangez.length; i<il; i++){
+                var range = rangez[i];
+                g.select('rect.nv-range'+i)
+                    .datum(range)
+                    .attr('height', availableHeight)
+                    .transition()
+                    .duration(duration)
+                    .attr('width', w1(range))
+                    .attr('x', xp1(range))
+            }
+
+            var wm = width - margin.right - margin.left, // m[1] - m[3],
+                hm = height - margin.top - margin.bottom , //m[0] - m[2],
+                calDomain = [d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]],
+                a = d3.scale.linear().domain(calDomain).range(d.range);
+
+            var r = Math.min(wm / 2, hm / 2);
+
+            var g = d3.select(this).select('g');
+            //
+            // //if (g.empty()) {
+            //
+              g = d3.select(this).append('svg:g')
+                .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
+
+              var y2 = needle.type===1 ? -r * needle.length:0;
+
+            drawCaption(g,300);
+
+            function drawCaption(g, r) {
+              if (d.needle.type>0) {
+                g.selectAll('text')
+                  .data(d.caption)
+                  .enter().append('svg:text')
+                  .text(function(d){return d.text})
+                  .attr({
+                    'dx': function(d){return 0},
+                    'dy': function(d){return d.dy + 'em' },
+                    'style': function(d){return 'font-family: '+d.family+';font-size: '+(r * d.size * d.scale)+'px;font-weight: '+d.weight+';fill: '+d.color+';alignment-baseline: middle;text-anchor: middle;'}
+                  })
+                  ;
+              }
+            }
+
+        });
+
+        return chart;
+    }
+
+    //============================================================
+    // Expose Public Variables
+    //------------------------------------------------------------
+
+    chart.options = nv.utils.optionsFunc.bind(chart);
+
+    chart._options = Object.create({}, {
+        // simple options, just get/set the necessary values
+        ranges:      {get: function(){return ranges;}, set: function(_){ranges=_;}}, // ranges (bad, satisfactory, good)
+        measures: {get: function(){return measures;}, set: function(_){measures=_;}}, // measures (actual, forecast)
+        forceX:      {get: function(){return forceX;}, set: function(_){forceX=_;}},
+        width:    {get: function(){return width;}, set: function(_){width=_;}},
+        height:    {get: function(){return height;}, set: function(_){height=_;}},
+        tickFormat:    {get: function(){return tickFormat;}, set: function(_){tickFormat=_;}},
+        duration:    {get: function(){return duration;}, set: function(_){duration=_;}},
+
+        x:    {get: function(){return x;}, set: function(_){x=_;}},
+        y:    {get: function(){return y;}, set: function(_){y=_;}},
+        r:    {get: function(){return r;}, set: function(_){r=_;}},
+        domain:    {get: function(){return domain;}, set: function(_){domain=_;}},
+        scaleDomain:    {get: function(){return scaleDomain;}, set: function(_){scaleDomain=_;}},
+        range:    {get: function(){return range;}, set: function(_){range=_;}},
+        scale:    {get: function(){return scale;}, set: function(_){scale=_;}},
+        pivot:    {get: function(){return pivot;}, set: function(_){pivot=_;}},
+        palette:    {get: function(){return palette;}, set: function(_){palette=_;}},
+        tick:    {get: function(){return tick;}, set: function(_){tick=_;}},
+        caption: {get: function(){return caption;}, set: function(_){caption=_;}},
+
+        // options that require extra logic in the setter
+        margin: {get: function(){return margin;}, set: function(_){
+            margin.top    = _.top    !== undefined ? _.top    : margin.top;
+            margin.right  = _.right  !== undefined ? _.right  : margin.right;
+            margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
+            margin.left   = _.left   !== undefined ? _.left   : margin.left;
+        }},
+        color:  {get: function(){return color;}, set: function(_){
+            color = nv.utils.getColor(_);
+        }},
+        needle:    {get: function(){return needle;}, set: function(_){
+          needle.type    = _.type    !== undefined ? _.type    : needle.type;
+          needle.length    = _.length    !== undefined ? _.length    : needle.length;
+          needle.width    = _.width    !== undefined ? _.width    : needle.width;
+        }},
+        tick: {get: function(){return tick;}, set: function(_){
+          tick.minor    = _.minor    !== undefined ? _.minor    : tick.minor;
+          // tick.major    = _.major    !== undefined ? _.major    : tick.major;
+          // tick.mark    = _.mark    !== undefined ? _.mark    : tick.mark;
+          // tick.exact    = _.exact    !== undefined ? _.exact    : tick.exact;
+        }},
+        palette:    {get: function(){return palette;}, set: function(_){
+          palette.bg    = _.bg    !== undefined ? _.bg    : palette.bg;
+          palette.scale    = _.scale    !== undefined ? _.scale    : palette.scale;
+          palette.rim    = _.rim    !== undefined ? _.rim    : palette.rim;
+          palette.pivot    = _.pivot    !== undefined ? _.pivot    : palette.pivot;
+          palette.needle    = _.needle    !== undefined ? _.needle    : palette.needle;
+        }},
+        scale:    {get: function(){return scale;}, set: function(_){
+          scale.dial    = _.dial    !== undefined ? _.dial    : scale.dial;
+          scale.text    = _.text    !== undefined ? _.text    : scale.text;
+          scale.position    = _.position    !== undefined ? _.position    : scale.position;
+          scale.rim    = _.rim    !== undefined ? _.rim    : scale.rim;
+        }},
+
+    });
+
+    nv.utils.initOptions(chart);
+    return chart;
+};
+
+nv.models.dialChart = function() {
+    "use strict";
+
+    //============================================================
+    // Public Variables with Default Settings
+    //------------------------------------------------------------
+
+    var dial = nv.models.dial();
+
+    var margin = {top: 5, right: 40, bottom: 20, left: 120}
+        , ranges = function(d) { return d.ranges }
+        , measures = function(d) { return d.measures }
+        , width = null
+        , height = 55
+        , tickFormat = null
+        , ticks = null
+        , noData = null
+        , needle = {type: 1, length: 0.75, width: 0.05}
+        , pivot =  function(d) { return d.pivot }
+        , caption =  function(d) { return d.caption }
+        ;
+
+    function chart(selection) {
+        selection.each(function(d, i) {
+            var container = d3.select(this);
+            nv.utils.initSVG(container);
+
+            var availableWidth = nv.utils.availableWidth(width, container, margin),
+                availableHeight = height - margin.top - margin.bottom,
+                that = this;
+
+            chart.update = function() { chart(selection) };
+            chart.container = this;
+
+            var rangez = ranges.call(this, d, i).slice().sort(d3.descending),
+                measurez = measures.call(this, d, i).slice().sort(d3.descending);
+
+            // Setup containers and skeleton of chart
+            var wrap = container.selectAll('g.nv-wrap.nv-dialChart').data([d]);
+            var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dialChart');
+            var gEnter = wrapEnter.append('g');
+            var g = wrap.select('g');
+
+            gEnter.append('g').attr('class', 'nv-dialWrap');
+            //gEnter.append('g').attr('class', 'nv-titles');
+
+            wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+            // Compute the new x-scale.
+            // var x1 = d3.scale.linear()
+            //     .domain([0, Math.max(rangez[0], measurez[0])])  // TODO: need to allow forceX and forceY, and xDomain, yDomain
+            //     .range([0, availableWidth]);
+
+            // Retrieve the old x-scale, if this is an update.
+            // var x0 = this.__chart__ || d3.scale.linear()
+            //     .domain([0, Infinity])
+            //     .range(x1.range());
+
+            // Stash the new scale.
+            //this.__chart__ = x1;
+
+            // var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
+            //     w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
+            //
+            // var title = gEnter.select('.nv-titles').append('g')
+            //     .attr('text-anchor', 'end')
+            //     .attr('transform', 'translate(-6,' + (height - margin.top - margin.bottom) / 2 + ')');
+            // title.append('text')
+            //     .attr('class', 'nv-title')
+            //     .text(function(d) { return d.title; });
+            //
+            // title.append('text')
+            //     .attr('class', 'nv-subtitle')
+            //     .attr('dy', '1em')
+            //     .text(function(d) { return d.subtitle; });
+
+            dial
+                .width(availableWidth)
+                .height(availableHeight);
+
+            var dialWrap = g.select('.nv-dialWrap');
+            d3.transition(dialWrap).call(dial);
+
+        });
+
+        d3.timer.flush();
+        return chart;
+    }
+
+    //============================================================
+    // Expose Public Variables
+    //------------------------------------------------------------
+
+    chart.dial = dial;
+
+    chart.options = nv.utils.optionsFunc.bind(chart);
+
+    chart._options = Object.create({}, {
+        // simple options, just get/set the necessary values
+        ranges:      {get: function(){return ranges;}, set: function(_){ranges=_;}}, // ranges (bad, satisfactory, good)
+        measures: {get: function(){return measures;}, set: function(_){measures=_;}}, // measures (actual, forecast)
+        width:    {get: function(){return width;}, set: function(_){width=_;}},
+        height:    {get: function(){return height;}, set: function(_){height=_;}},
+        tickFormat:    {get: function(){return tickFormat;}, set: function(_){tickFormat=_;}},
+        ticks:    {get: function(){return ticks;}, set: function(_){ticks=_;}},
+        noData:    {get: function(){return noData;}, set: function(_){noData=_;}},
+
+        x:    {get: function(){return x;}, set: function(_){x=_;}},
+        y:    {get: function(){return y;}, set: function(_){y=_;}},
+        r:    {get: function(){return r;}, set: function(_){r=_;}},
+        domain:    {get: function(){return domain;}, set: function(_){domain=_;}},
+        scaleDomain:    {get: function(){return scaleDomain;}, set: function(_){scaleDomain=_;}},
+        range:    {get: function(){return range;}, set: function(_){range=_;}},
+        scale:    {get: function(){return scale;}, set: function(_){scale=_;}},
+        pivot:    {get: function(){return pivot;}, set: function(_){pivot=_;}},
+        palette:    {get: function(){return palette;}, set: function(_){palette=_;}},
+        tick:    {get: function(){return tick;}, set: function(_){tick=_;}},
+        caption: {get: function(){return caption;}, set: function(_){caption=_;}},
+
+        // options that require extra logic in the setter
+        margin: {get: function(){return margin;}, set: function(_){
+            margin.top    = _.top    !== undefined ? _.top    : margin.top;
+            margin.right  = _.right  !== undefined ? _.right  : margin.right;
+            margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
+            margin.left   = _.left   !== undefined ? _.left   : margin.left;
+        }},
+        needle:    {get: function(){return needle;}, set: function(_){
+          needle.type    = _.type    !== undefined ? _.type    : needle.type;
+          needle.length    = _.length    !== undefined ? _.length    : needle.length;
+          needle.width    = _.width    !== undefined ? _.width    : needle.width;
+        }},
+        tick:    {get: function(){return tick;}, set: function(_){
+          tick.minor    = _.minor    !== undefined ? _.minor    : tick.minor;
+          tick.major    = _.major    !== undefined ? _.major    : tick.major;
+          tick.mark    = _.mark    !== undefined ? _.mark    : tick.mark;
+          tick.exact    = _.exact    !== undefined ? _.exact    : tick.exact;
+        }},
+        palette:    {get: function(){return palette;}, set: function(_){
+          palette.bg    = _.bg    !== undefined ? _.bg    : palette.bg;
+          palette.scale    = _.scale    !== undefined ? _.scale    : palette.scale;
+          palette.rim    = _.rim    !== undefined ? _.rim    : palette.rim;
+          palette.pivot    = _.pivot    !== undefined ? _.pivot    : palette.pivot;
+          palette.needle    = _.needle    !== undefined ? _.needle    : palette.needle;
+        }},
+        scale:    {get: function(){return scale;}, set: function(_){
+          scale.dial    = _.dial    !== undefined ? _.dial    : scale.dial;
+          scale.text    = _.text    !== undefined ? _.text    : scale.text;
+          scale.position    = _.position    !== undefined ? _.position    : scale.position;
+          scale.rim    = _.rim    !== undefined ? _.rim    : scale.rim;
+        }},
+    });
+
+    nv.utils.inheritOptions(chart, dial);
+    nv.utils.initOptions(chart);
+
+    return chart;
+};
 
 
 nv.models.candlestickBar = function() {

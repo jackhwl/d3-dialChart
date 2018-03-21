@@ -440,34 +440,34 @@ olapDialChart = function() {
 
     }
 
-    function gradientColorGenerater(svg, colors) {
-        if (!svg) return;
-        let defs = svg.append("svg:defs");
-        let res = [];
-        if (Array.isArray(colors)) {
-            colors.forEach(function (item, index) {
-                let next = colors[index + 1] || colors[0];
-                let id = `color_gradient_${index}`;
-                let gradient = defs.append("svg:linearGradient")
-                    .attr("id", id);
-
-                gradient.append("svg:stop")
-                    .attr("offset", "0%")
-                    .attr("stop-color", item.color);
-
-                gradient.append("svg:stop")
-                    .attr("offset", "100%")
-                    .attr("stop-color", next.color);
-
-                res[index] = {
-                    gradient:gradient,
-                    color: `url(#${id})`,
-                    percent: item.percent
-                }
-            });
-        }
-        return res;
-    }
+    // function gradientColorGenerater(svg, colors) {
+    //     if (!svg) return;
+    //     let defs = svg.append("svg:defs");
+    //     let res = [];
+    //     if (Array.isArray(colors)) {
+    //         colors.forEach(function (item, index) {
+    //             let next = colors[index + 1] || colors[0];
+    //             let id = `color_gradient_${index}`;
+    //             let gradient = defs.append("svg:linearGradient")
+    //                 .attr("id", id);
+    //
+    //             gradient.append("svg:stop")
+    //                 .attr("offset", "0%")
+    //                 .attr("stop-color", item.color);
+    //
+    //             gradient.append("svg:stop")
+    //                 .attr("offset", "100%")
+    //                 .attr("stop-color", next.color);
+    //
+    //             res[index] = {
+    //                 gradient:gradient,
+    //                 color: `url(#${id})`,
+    //                 percent: item.percent
+    //             }
+    //         });
+    //     }
+    //     return res;
+    // }
 
     function drawNeedle(a, g, r) {
       // needle
@@ -522,12 +522,7 @@ olapDialChart = function() {
           .attr({
             'dx': function(d){return 0},
             'dy': function(d){return d.dy + 'em' },
-            'font-family': function(d){return d.family},
-            'font-size': function(d){return r * d.size * d.scale + 'px'},
-            'font-weight': function(d){return d.weight},
-            'fill': function(d){return d.color},
-            'alignment-baseline': 'middle',
-            'text-anchor': 'middle',
+            'style': function(d){return 'font-family: '+d.family+';font-size: '+(r * d.size * d.scale)+'px;font-weight: '+d.weight+';fill: '+d.color+';alignment-baseline: middle;text-anchor: middle;'}
           })
           ;
       }

@@ -6,9 +6,12 @@
     <script src="d3.min.js" charset="utf-8"></script>
     <script src="ov.nv.d3.js"></script>
     <style>
-        text {
-            font: 12px sans-serif;
-        }
+      @font-face {
+          font-family: SegoeUI;
+          src: url('../latest_sl.eot?#iefix') format('embedded-opentype');
+          src: url('./latest_sl.ttf') format("truetype");
+      }
+
         svg {
             display: block;
         }
@@ -67,8 +70,8 @@
         .data(data)
         .enter().append("svg")
         .attr("class", "dial nvd3")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", 280*2)
+        .attr("height", 280*2);
 
     vis.transition().duration(1000).call(chart);
 
