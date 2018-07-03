@@ -21,6 +21,7 @@
       var w = 1260,
           h = 500,
           bgColor = '#031732',
+          //bgColor = '#fff',
           tick = {minor: 5, major: 10, mark: 'line', exact: false},
           tick1 = {minor: 5, major: 10, mark: 'circle', exact: false},
           scale = { dial: {outer: 1.00,  middle: 0.95, inner: 0.92, dash: 0.85 },
@@ -36,9 +37,10 @@
           ;
 
       var layout = [
-        //  { x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
-          //{ x: 400, y: 250, r: 180, tick: tick, palette: palette, needle: needle, scale:scale, pivot: pivot, scaleDomain: scaleDomain, range: range, caption: caption },
-          //{ x: 610, y: 250, r: 40, tick: tick1, palette: palette, needle: needle, scale:scale, pivot: pivot, caption: caption },
+         //{ x: 150, y: 250, r: 80, m: 220, ticks: 2, mark: 'line', needle:{color:'beige', circle: 2}, scale: scale  },
+         // good one
+         // { x: 400, y: 250, r: 180, tick: tick, palette: palette, needle: needle, scale:scale, pivot: pivot, scaleDomain: scaleDomain, range: range, caption: caption },
+          //{ x: 610, y: 250, r: 40, tick: tick1, palette: palette, needle: needle, scale:scale, pivot: pivot, scaleDomain: scaleDomain, range: range, caption: caption },
           { x: 810, y: 250, r: 280, pivot: [ 0.10, 0.02 ], scaleDomain: [0, 220], range: [-135, 135],
             tick: {minor: 5, major: 14, mark: 'line', exact: true},
             palette: {bg: bgColor, scale:'#2EA0FF', rim: ['#031732', '#0279DF'], pivot: '#fff', needle: '#fff'},

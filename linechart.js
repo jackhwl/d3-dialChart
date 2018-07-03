@@ -16,7 +16,7 @@ function myData() {
 }
 
 nv.addGraph(function() {
-	var chart = nv.models.dialChart();
+	var chart = nv.models.lineChart();
 
 	chart.xAxis
 		.axisLabel("X-axis Label");

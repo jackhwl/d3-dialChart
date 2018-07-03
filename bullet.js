@@ -3,6 +3,8 @@
 // Chart design based on the recommendations of Stephen Few. Implementation
 // based on the work of Clint Ivy, Jamie Love, and Jason Davies.
 // http://projects.instantcognition.com/protovis/bulletchart/
+// https://gist.github.com/mbostock/4061961
+
 d3.bullet = function() {
   var orient = "left", // TODO top & bottom
       reverse = false,
