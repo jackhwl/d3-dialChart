@@ -2613,28 +2613,28 @@ nv.models.dial = function() {
             container = d3.select(this);
             nv.utils.initSVG(container);
 
-            var rangez = ranges.call(this, d, i).slice(),
-                measurez = measures.call(this, d, i).slice(),
-                rangeLabelz = rangeLabels.call(this, d, i).slice(),
-                measureLabelz = measureLabels.call(this, d, i).slice();
+            // var rangez = ranges.call(this, d, i).slice(),
+            //     measurez = measures.call(this, d, i).slice(),
+            //     rangeLabelz = rangeLabels.call(this, d, i).slice(),
+            //     measureLabelz = measureLabels.call(this, d, i).slice();
 
             // Setup Scales
             // Compute the new x-scale.
-            var x1 = d3.scale.linear()
-                .domain( d3.extent(d3.merge([forceX, rangez])) )
-                .range([0, availableWidth]);
+            // var x1 = d3.scale.linear()
+            //     .domain( d3.extent(d3.merge([forceX, rangez])) )
+            //     .range([0, availableWidth]);
 
-            // Retrieve the old x-scale, if this is an update.
-            var x0 = this.__chart__ || d3.scale.linear()
-                .domain([0, Infinity])
-                .range(x1.range());
+            // // Retrieve the old x-scale, if this is an update.
+            // var x0 = this.__chart__ || d3.scale.linear()
+            //     .domain([0, Infinity])
+            //     .range(x1.range());
 
-            // Stash the new scale.
-            this.__chart__ = x1;
+            // // Stash the new scale.
+            // this.__chart__ = x1;
 
-            var rangeMin = d3.min(rangez), //rangez[2]
-                rangeMax = d3.max(rangez), //rangez[0]
-                rangeAvg = rangez[1];
+            // var rangeMin = d3.min(rangez), //rangez[2]
+            //     rangeMax = d3.max(rangez), //rangez[0]
+            //     rangeAvg = rangez[1];
 
             // Setup containers and skeleton of chart
             var wrap = container.selectAll('g.nv-wrap.nv-dial').data([d]);
@@ -2673,13 +2673,25 @@ nv.models.dial = function() {
             var wm = width - margin.right - margin.left, // m[1] - m[3],
                 hm = height - margin.top - margin.bottom , //m[0] - m[2],
                 calDomain = [d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]],
-                a = d3.scale.linear().domain(calDomain).range(d.range);
+                a = d3.scale.linear().domain(calDomain).range(d.range),
+                a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
 
             var r = Math.min(wm / 2, hm / 2);
-            console.log('width=', width);
-            console.log('height=', height);
-            console.log('margin', margin);
-            console.log('r=', r);
+            // console.log('width=', width);
+            // console.log('height=', height);
+            // console.log('margin', margin);
+            // console.log('r=', r);
+            // console.log('d.range=', d.range);
+            // console.log('d.scaleDomain=', d.scaleDomain);
+            // console.log('calDomain=', calDomain);
+            // console.log('i=', i);
+            // console.log('d=', d);
+            // console.log('selection=', selection);
+                  
+            // console.log('a=', a);
+            // console.log('a(d)=', a(d));
+            // console.log('a(66.5)=', a(66.5));
+            // console.log('a0(209)=', a0(d.caption[0].text));
 
             var g = d3.select(this).select('g');
             
@@ -2690,13 +2702,25 @@ nv.models.dial = function() {
 
                 var y2 = needle.type===1 ? -r * needle.length:0;
 
-                r = 300;
+                //r = 300;
                 drawCaption(g, r);
                 createDefs(g.append('svg:defs'), 0,0,0.5,1);
-                drawRim(a(d), g.append('svg:g').attr('class', 'rim'), r);
+                drawRim(a0(d.caption[0].text), g.append('svg:g').attr('class', 'rim'), r);
                 drawScale(a, g.append('svg:g').attr('class', 'scale'), r);
                 drawGlare(g, r);
                 drawNeedle(a, g, r);
+
+                //console.log('endRange=', endRange);
+                //console.log('g=', g);
+                //console.log('r=', r);
+                    // console.log('range=', range(d));
+                    // console.log('angle=', angle);
+                    // console.log('line=', line);
+                    // console.log('d=', d);
+                    // console.log('g=', g);
+                    // console.log('d3.range(points)=', d3.range(points));
+
+                
             // } else {
             //     g.select('g.needle')
             //     .transition().ease('elastic')
@@ -2727,7 +2751,7 @@ nv.models.dial = function() {
                     var points = 50;
                     var angle = d3.scale.linear()
                         .domain([0, points-1])
-                        .range([range[0] * (Math.PI/180), endRange * (Math.PI/180)]);
+                        .range([range(d)[0] * (Math.PI/180), endRange * (Math.PI/180)]);
           
                     var line = d3.svg.line.radial()
                         .interpolate("basis")
@@ -2739,7 +2763,7 @@ nv.models.dial = function() {
                     //     // .attr("width", dimension)
                     //     // .attr("height", dimension)
                     // .append("g");
-          
+
                     g.append("path").datum(d3.range(points))
                         //.attr("class", "lineArc")
                         .attr("d", line)
@@ -2840,8 +2864,8 @@ nv.models.dial = function() {
                   var arc = d3.svg.arc()
                       .innerRadius(r* scale.position.end-2)
                       .outerRadius(r* scale.position.end+1)
-                      .startAngle(range[0] * (Math.PI/180)) //converting from degs to radians
-                      .endAngle(range[1] * (Math.PI/180)); //just radians
+                      .startAngle(range(d)[0] * (Math.PI/180)) //converting from degs to radians
+                      .endAngle(range(d)[1] * (Math.PI/180)); //just radians
           
                   g.append("path")
                       .attr("d", arc)
@@ -2857,14 +2881,15 @@ nv.models.dial = function() {
                 var major = a.ticks(tick.major);
                 var minor = a.ticks(tick.minor * tick.major);//.filter(function(d) { return major.indexOf(d) == -1; });
                 var middle = a.ticks(tick.minor * tick.major).filter(function(d) { return major.indexOf(d) != -1; });
-                var majorRange = tick.exact ? [major[0], scaleDomain[1]] : [major[0], major[major.length-1]];
-          
+                var majorRange = tick.exact ? [major[0], d.scaleDomain[1]] : [major[0], major[major.length-1]];
+                var scaleDomainUpper = scaleDomain(d)[1];
+
                 g.selectAll('text.label')
                   .data(needle.type>0 ? majorRange : major)
                   .enter().append('svg:text')
                   .attr({
-                    'x': function(d) { return Math.cos( (-90 + a((tick.exact ? d / scaleDomain[1] * major[major.length-1] : d))) / 180 * Math.PI) * r * scale.text.position; },
-                    'y': function(d) { return Math.sin( (-90 + a((tick.exact ? d / scaleDomain[1] * major[major.length-1] : d))) / 180 * Math.PI) * r * scale.text.position; },
+                    'x': function(d) { return Math.cos( (-90 + a((tick.exact ? d / scaleDomainUpper * major[major.length-1] : d))) / 180 * Math.PI) * r * scale.text.position; },
+                    'y': function(d) { return Math.sin( (-90 + a((tick.exact ? d / scaleDomainUpper * major[major.length-1] : d))) / 180 * Math.PI) * r * scale.text.position; },
                     'dy': function(d){ return scale.text.dy + 'em' },
                     'font-family': function(d){return scale.text.family},
                     'font-size': function(d){return r * scale.text.size * scale.text.scale + 'px'},
@@ -3093,7 +3118,7 @@ nv.models.dial = function() {
                 var n = g.append('svg:g')
                   .attr('class', 'needle')
                   .attr('filter', 'url(#dropShadow)')
-                  .attr('transform', function(d) { return 'rotate(' + a(d) + ')'; })
+                  .attr('transform', function(d) { return 'rotate(' + a0(d.caption[0].text) + ')'; })
                   ;
           
                 if (needle.type>0) {
@@ -3113,7 +3138,7 @@ nv.models.dial = function() {
                     }
           
                   n.append('svg:circle')
-                    .attr('r', r * pivot[1])
+                    .attr('r', r * d.pivot[1])
                     .style('fill', palette.pivot)
                     ;
                 } else {
@@ -3122,11 +3147,11 @@ nv.models.dial = function() {
                     .attr('fill', palette.needle);
           
                   n.append('svg:circle')
-                    .attr('r', r * pivot[0])
+                    .attr('r', r * d.pivot[0])
                     .style('fill', 'url(#outerGradient)');
           
                   n.append('svg:circle')
-                    .attr('r', r * pivot[1])
+                    .attr('r', r * d.pivot[1])
                     .style('fill', 'url(#innerGradient)');
                 }
           
@@ -3255,8 +3280,8 @@ nv.models.dialChart = function() {
             chart.update = function() { chart(selection) };
             chart.container = this;
 
-            var rangez = ranges.call(this, d, i).slice().sort(d3.descending),
-                measurez = measures.call(this, d, i).slice().sort(d3.descending);
+            // var rangez = ranges.call(this, d, i).slice().sort(d3.descending),
+            //     measurez = measures.call(this, d, i).slice().sort(d3.descending);
 
             // Setup containers and skeleton of chart
             var wrap = container.selectAll('g.nv-wrap.nv-dialChart').data([d]);

@@ -28,6 +28,11 @@ olapDialChart = function() {
           a = d3.scale.linear().domain(domain).range(range);
 
       var r = Math.min(wm / 2, hm / 2);
+      // console.log('d.range=', range);
+      // console.log('d.scaleDomain=', scaleDomain);
+      // console.log('calDomain=', domain);
+      // console.log('d=', d);
+      // console.log('selection=', selection);
 
       var g = d3.select(this).select('g');
 
