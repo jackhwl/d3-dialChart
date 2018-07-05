@@ -2676,11 +2676,12 @@ nv.models.dial = function() {
                 a = d3.scale.linear().domain(calDomain).range(d.range),
                 a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
 
-            var r = Math.min(wm / 2, hm / 2);
+            //var r = Math.min(wm / 2, hm / 2);
+            r = d.r;
             // console.log('width=', width);
             // console.log('height=', height);
             // console.log('margin', margin);
-            // console.log('r=', r);
+             console.log('r=', r);
             // console.log('d.range=', d.range);
             // console.log('d.scaleDomain=', d.scaleDomain);
             // console.log('calDomain=', calDomain);
@@ -3269,7 +3270,8 @@ nv.models.dialChart = function() {
         selection.each(function(d, i) {
             var container = d3.select(this);
             nv.utils.initSVG(container);
-            // console.log('0width=', width);
+            console.log('0d.r=', d.r);
+            //console.log('0width=', width);
             // console.log('0height=', height);
             // console.log('0margin', margin);
 

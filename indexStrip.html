@@ -72,20 +72,20 @@
       });
 
       var svg = d3.select(chartselector)
-          .append('svg:svg')
-          .attr('width', w)
-          .attr('height', h)
-          .attr('style', 'background: ' + bgColor)
-          ;
+        .append('svg:svg')
+        .attr('width', w)
+        .attr('height', h)
+        .attr('style', 'background: ' + bgColor)
+        ;
 
       var dials = svg.selectAll('g.dial')
-          .data(layout)
-          .enter()
-          .append('svg:g')
-          .attr('class', 'dial')
-          .attr('id', function(d, i) { return 'dial-' + i; })
-          .attr('transform', function(d) { return 'translate(' + (d.x - d.r) + ',' + (d.y - d.r) + ')'; } )
-          ;
+        .data(layout)
+        .enter()
+        .append('svg:g')
+        .attr('class', 'dial')
+        .attr('id', function(d, i) { return 'dial-' + i; })
+        .attr('transform', function(d) { return 'translate(' + (d.x - d.r) + ',' + (d.y - d.r) + ')'; } )
+        ;
 
       dials.each(function(d, i) {
         d3.select(this)
@@ -113,8 +113,9 @@
             ;
         });
         svg.selectAll('g.dial').remove();
+
         var dials = svg.selectAll('g.dial').data(layout);
-        dials.exit().remove();
+        //dials.exit().remove();
         dials.enter()
             .append('svg:g')
             .attr('class', 'dial')

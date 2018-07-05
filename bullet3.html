@@ -76,6 +76,28 @@
     vis.transition().duration(1000).call(chart);
 
     window.transition = function() {
+        var r2 = Math.random()*200;
+        console.log(r2);
+        data[0].r = r2;
+
+        d3.select("#chart").selectAll("svg").remove();
+        
+        //var dials = svg.selectAll('g.dial').data(layout);
+        //dials.exit().remove();
+
+        var vis = d3.select("#chart").selectAll("svg").data(data);
+        vis.exit().remove();
+        vis.enter().append("svg")
+        .attr("class", "dial nvd3")
+        .attr("width", 280*2)
+        .attr("height", 280*2);
+        // var vis = d3.select("#chart").selectAll("svg")
+        // .data(data)
+        // .enter().append("svg")
+        // .attr("class", "dial nvd3")
+        // .attr("width", 280*2)
+        // .attr("height", 280*2);
+
         vis.transition().duration(1000).call(chart);
     };
 
