@@ -2608,9 +2608,8 @@ nv.models.dial = function() {
     function chart(selection) {
         selection.each(function(d, i) {
             var availableWidth = width - margin.left - margin.right,
-                availableHeight = height - margin.top - margin.bottom;
-
-            container = d3.select(this);
+                availableHeight = height - margin.top - margin.bottom,
+                container = d3.select(this);
             nv.utils.initSVG(container);
 
             // var rangez = ranges.call(this, d, i).slice(),
@@ -2640,7 +2639,7 @@ nv.models.dial = function() {
             var wrap = container.selectAll('g.nv-wrap.nv-dial').data([d]);
             var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dial');
             var gEnter = wrapEnter.append('g');
-            var g = wrap.select('g');
+            //var g = wrap.select('g');
 
             // for(var i=0,il=rangez.length; i<il; i++){
             //     var rangeClassNames = 'nv-range nv-range'+i;
@@ -2651,8 +2650,6 @@ nv.models.dial = function() {
             // }
 
             // gEnter.append('rect').attr('class', 'nv-measure');
-
-            wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             // var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
             //     w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
@@ -2677,40 +2674,38 @@ nv.models.dial = function() {
                 a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
 
             var r = Math.min(wm / 2, hm / 2);
-            //r = d.r;
-            //height = d.height;
-            //console.log('width=', width);
-            //console.log('height=', height);
-            // console.log('margin', margin);
             console.log('r=', r);
-            // console.log('d.range=', d.range);
-            // console.log('d.scaleDomain=', d.scaleDomain);
-            // console.log('calDomain=', calDomain);
-            // console.log('i=', i);
-            //console.log('d=', d);
-            // console.log('selection=', selection);
-                  
-            // console.log('a=', a);
-            // console.log('a(d)=', a(d));
-            // console.log('a(66.5)=', a(66.5));
-            // console.log('a0(209)=', a0(d.caption[0].text));
 
-            var g = d3.select(this).select('g');
+            //var g = d3.select(this).select('g');
             
             //if (!g.empty()) {
             
-                g = d3.select(this).append('svg:g')
-                    .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
+                //g = d3.select(this).append('svg:g')
 
-                var y2 = needle.type===1 ? -r * needle.length:0;
+                //g = gEnter.append('svg:g')
+                //g = gEnter.select().append('svg:g')
+                // gEnter.append('g')
+                // .attr('class', 'nv-dail-nodes')
+                // .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
+
+                // g = wrap.selectAll('.nv-dail-nodes');
+                //wrap.selectAll('.nv-dail-nodes').remove();
+            gEnter.append('g').attr('class', 'nv-dail-nodes')
+                .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
+            var g = wrap.selectAll('.nv-dail-nodes');
+
+            wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+            //var y2 = needle.type===1 ? -r * needle.length:0;
 
                 //r = 300;
-                drawCaption(g, r);
-                createDefs(g.append('svg:defs'), 0,0,0.5,1);
-                drawRim(a0(d.caption[0].text), g.append('svg:g').attr('class', 'rim'), r);
-                drawScale(a, g.append('svg:g').attr('class', 'scale'), r);
-                drawGlare(g, r);
-                drawNeedle(a, g, r);
+                //g.selectAll('g').remove();
+                drawCaption();
+                createDefs();
+                drawRim();
+                drawScale();
+                drawGlare();
+                drawNeedle();
 
                 //console.log('endRange=', endRange);
                 //console.log('g=', g);
@@ -2734,7 +2729,12 @@ nv.models.dial = function() {
             //     //   ;
             // }
         
-            function drawRim(endRange, g, r) {
+            function drawRim() {
+                var endRange = a0(d.caption[0].text);
+                g.selectAll('.rim').remove();
+                //gRim = g.append('svg:g').attr('class', 'rim');
+                var rimNodes = g.selectAll('.rim').data([d]);
+                var gRim = rimNodes.enter().append('g').attr("class", "rim");
                 if (needle.type>0) {
                     //scale gradient arc
                     // var arc = d3.svg.arc()
@@ -2766,15 +2766,15 @@ nv.models.dial = function() {
                     //     // .attr("height", dimension)
                     // .append("g");
 
-                    g.append("path").datum(d3.range(points))
+                    gRim.append("path").datum(d3.range(points))
                         //.attr("class", "lineArc")
                         .attr("d", line)
                         //.attr("transform", "translate(" + (r + padding) + ", " + (r + padding) + ")")
                         ;
                     var color = d3.interpolate(palette.rim[0], palette.rim[1]);
           
-                    var path = g.select("path").remove();
-                    g.selectAll("path")
+                    var path = gRim.select("path").remove();
+                    gRim.selectAll("path")
                             .data(quads(samples(path.node(), 8)))
                           .enter().append("path")
                             .style("fill", function(d) { return color(d.t); })
@@ -2784,16 +2784,16 @@ nv.models.dial = function() {
                             ;
                   } else {
                     //face
-                    g.append('svg:circle')
+                    gRim.append('svg:circle')
                       .attr('r', r * scale.dial.outer)
                       .style('fill', 'url(#outerGradient)')
                       .attr('filter', 'url(#dropShadow)');
           
-                    g.append('svg:circle')
+                    gRim.append('svg:circle')
                       .attr('r', r * scale.dial.middle)
                       .style('fill', 'url(#innerGradient)');
           
-                    g.append('svg:circle')
+                    gRim.append('svg:circle')
                       .attr('r', r * scale.dial.inner)
                       .style('fill', 'url(#faceGradient)');
                   }
@@ -2860,7 +2860,12 @@ nv.models.dial = function() {
           
             }
           
-            function drawScale(a, g, r) {
+            function drawScale() {
+                g.selectAll('.scale').remove();
+                //gScale = g.append('svg:g').attr('class', 'scale');
+                var scaleNodes = g.selectAll('.scale').data([d]);
+                var gScale = scaleNodes.enter().append('g').attr("class", "scale");
+
                 if (needle.type>0) {
                   //scale arc thin rim
                   var arc = d3.svg.arc()
@@ -2869,7 +2874,7 @@ nv.models.dial = function() {
                       .startAngle(range(d)[0] * (Math.PI/180)) //converting from degs to radians
                       .endAngle(range(d)[1] * (Math.PI/180)); //just radians
           
-                  g.append("path")
+                    gScale.append("path")
                       .attr("d", arc)
                       .attr("fill", palette.scale)
                 }
@@ -2886,7 +2891,7 @@ nv.models.dial = function() {
                 var majorRange = tick.exact ? [major[0], d.scaleDomain[1]] : [major[0], major[major.length-1]];
                 var scaleDomainUpper = scaleDomain(d)[1];
 
-                g.selectAll('text.label')
+                gScale.selectAll('text.label')
                   .data(needle.type>0 ? majorRange : major)
                   .enter().append('svg:text')
                   .attr({
@@ -2904,7 +2909,7 @@ nv.models.dial = function() {
                   ;
           
                 if (tick.mark == 'circle') {
-                  g.selectAll('circle.label')
+                    gScale.selectAll('circle.label')
                       .data(minor)
                     .enter().append('svg:circle')
                       .attr('class', 'label')
@@ -2915,7 +2920,7 @@ nv.models.dial = function() {
           
                 if (tick.mark == 'line') {
                   if (needle.type>0) {
-                    g.selectAll('line.label')
+                    gScale.selectAll('line.label')
                       .data(minor)
                       .enter().append('svg:line')
                         .attr('class', 'mlabel')
@@ -2924,7 +2929,7 @@ nv.models.dial = function() {
                         .attr('y1', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * (scale.position.start+0.01)); })
                         .attr('x2', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * scale.position.end); })
                         .attr('y2', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * scale.position.end); });
-                    g.selectAll('line.label')
+                    gScale.selectAll('line.label')
                       .data(middle)
                       .enter().append('svg:line')
                         .attr('class', 'mlabel')
@@ -2934,7 +2939,7 @@ nv.models.dial = function() {
                         .attr('x2', function(d) { return Math.cos( (-90 + a(d)) / 180 * Math.PI) * (r * scale.position.end); })
                         .attr('y2', function(d) { return Math.sin( (-90 + a(d)) / 180 * Math.PI) * (r * scale.position.end); });
                   } else {
-                    g.selectAll('line.label')
+                    gScale.selectAll('line.label')
                       .data(minor)
                       .enter().append('svg:line')
                         .attr('class', 'label')
@@ -2946,7 +2951,7 @@ nv.models.dial = function() {
                 }
             }
           
-            function drawGlare(g, r) {
+            function drawGlare() {
                 // gradient on top panel
                 var rdial3 = r * scale.dial.dash;
                 g.append('svg:path')
@@ -2956,8 +2961,10 @@ nv.models.dial = function() {
                   ;
             }
 
-            function createDefs(defs, x1, y1, x2, y2) {
-
+            function createDefs() {
+                g.selectAll('defs').remove();
+                var defs = g.append('svg:defs')
+                var x1 = 0, y1 = 0, x2 = 0.5, y2 = 1;
                 // var arc0 = d3.svg.arc()
                 //     .innerRadius(r* scale.position.end-50)
                 //     .outerRadius(r* scale.position.end-20)
@@ -2968,6 +2975,7 @@ nv.models.dial = function() {
                 //     .attr("d", arc0)
                 //     .attr("fill", "url(#arcGradient)")
           
+                //defs.remove();
                     // Define the gradient
                   var	newGrad = defs.append("svg:linearGradient")
                           .attr("id", "newGrad")
@@ -3115,7 +3123,7 @@ nv.models.dial = function() {
           
             }
 
-            function drawNeedle(a, g, r) {
+            function drawNeedle() {
                 // needle
                 var n = g.append('svg:g')
                   .attr('class', 'needle')
@@ -3159,8 +3167,9 @@ nv.models.dial = function() {
           
             }
 
-            function drawCaption(g, r) {
+            function drawCaption() {
               if (d.needle.type>0) {
+                g.selectAll('text').remove();
                 g.selectAll('text')
                   .data(d.caption)
                   .enter().append('svg:text')
@@ -3268,20 +3277,20 @@ nv.models.dialChart = function() {
         ;
 
     function chart(selection) {
-        console.log('selection=', selection);
+        //console.log('selection=', selection);
         selection.each(function(d, i) {
             var container = d3.select(this);
             nv.utils.initSVG(container);
             //console.log('0d=', d);
-            console.log('0width=', width);
-            console.log('0height=', height);
+            //console.log('0width=', width);
+            //console.log('0height=', height);
             // console.log('0margin', margin);
 
             var availableWidth = nv.utils.availableWidth(width, container, margin),
                 availableHeight = height - margin.top - margin.bottom,
                 that = this;
-            console.log('0availableWidth=', availableWidth);
-            console.log('0availableWidth=', availableHeight);
+            //console.log('0availableWidth=', availableWidth);
+            //console.log('0availableWidth=', availableHeight);
 
             //chart.update = function() { chart(selection) };
             chart.update = function() { container.transition().call(chart); };
