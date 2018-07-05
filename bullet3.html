@@ -35,10 +35,11 @@
         margin = {top: 5, right: 40, bottom: 20, left: 120};
 
     var chart = nv.models.dialChart()
-            .width(width - margin.right - margin.left)
+            // .width(width - margin.right - margin.left)
             .height(height - margin.top - margin.bottom)
-            ;
+            // ;
     console.log(chart.width());
+    console.log(chart.height());
     //console.log(chart.pivot);
 
     data = [
@@ -75,31 +76,31 @@
 
     vis.transition().duration(1000).call(chart);
 
-    window.transition = function() {
-        var r2 = Math.random()*200;
-        console.log(r2);
-        data[0].r = r2;
-
-        d3.select("#chart").selectAll("svg").remove();
+    // window.transition = function() {
+    //     chart.update();
+    //     d3.select("#chart").selectAll("svg").remove();
         
-        //var dials = svg.selectAll('g.dial').data(layout);
-        //dials.exit().remove();
+    //     //var dials = svg.selectAll('g.dial').data(layout);
+    //     //dials.exit().remove();
 
-        var vis = d3.select("#chart").selectAll("svg").data(data);
-        vis.exit().remove();
-        vis.enter().append("svg")
-        .attr("class", "dial nvd3")
-        .attr("width", 280*2)
-        .attr("height", 280*2);
-        // var vis = d3.select("#chart").selectAll("svg")
-        // .data(data)
-        // .enter().append("svg")
-        // .attr("class", "dial nvd3")
-        // .attr("width", 280*2)
-        // .attr("height", 280*2);
+    //     var vis = d3.select("#chart").selectAll("svg").data(data);
+    //     vis.exit().remove();
+    //     vis.enter().append("svg")
+    //     .attr("class", "dial nvd3")
+    //     .attr("width", 280*2)
+    //     .attr("height", 280*2);
+    //     // chart
+    //     //     .width(600+Math.random()*200)
+    //     //     .height(400+Math.random()*100);
+    //     // var vis = d3.select("#chart").selectAll("svg")
+    //     // .data(data)
+    //     // .enter().append("svg")
+    //     // .attr("class", "dial nvd3")
+    //     // .attr("width", 280*2)
+    //     // .attr("height", 280*2);
 
-        vis.transition().duration(1000).call(chart);
-    };
+    //     vis.transition().duration(1000).call(chart);
+    // };
 
     // function randomize(d) {
     //     if (!d.randomizer) d.randomizer = randomizer(d);
@@ -115,7 +116,9 @@
     //     };
     // }
 
-    d3.select('body').on('click', window.transition);
+nv.utils.windowResize(chart.update);
+//nv.utils.windowResize(window.transition);
+    //d3.select('body').on('click', window.transition);
 
 </script>
 </body>

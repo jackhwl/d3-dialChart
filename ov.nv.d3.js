@@ -2676,17 +2676,18 @@ nv.models.dial = function() {
                 a = d3.scale.linear().domain(calDomain).range(d.range),
                 a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
 
-            //var r = Math.min(wm / 2, hm / 2);
-            r = d.r;
-            // console.log('width=', width);
-            // console.log('height=', height);
+            var r = Math.min(wm / 2, hm / 2);
+            //r = d.r;
+            //height = d.height;
+            //console.log('width=', width);
+            //console.log('height=', height);
             // console.log('margin', margin);
-             console.log('r=', r);
+            console.log('r=', r);
             // console.log('d.range=', d.range);
             // console.log('d.scaleDomain=', d.scaleDomain);
             // console.log('calDomain=', calDomain);
             // console.log('i=', i);
-            // console.log('d=', d);
+            //console.log('d=', d);
             // console.log('selection=', selection);
                   
             // console.log('a=', a);
@@ -3257,7 +3258,7 @@ nv.models.dialChart = function() {
         , ranges = function(d) { return d.ranges }
         , measures = function(d) { return d.measures }
         , width = null
-        , height = 55
+        , height = null
         , tickFormat = null
         , ticks = null
         , noData = null
@@ -3267,19 +3268,23 @@ nv.models.dialChart = function() {
         ;
 
     function chart(selection) {
+        console.log('selection=', selection);
         selection.each(function(d, i) {
             var container = d3.select(this);
             nv.utils.initSVG(container);
-            console.log('0d.r=', d.r);
-            //console.log('0width=', width);
-            // console.log('0height=', height);
+            //console.log('0d=', d);
+            console.log('0width=', width);
+            console.log('0height=', height);
             // console.log('0margin', margin);
 
             var availableWidth = nv.utils.availableWidth(width, container, margin),
                 availableHeight = height - margin.top - margin.bottom,
                 that = this;
+            console.log('0availableWidth=', availableWidth);
+            console.log('0availableWidth=', availableHeight);
 
-            chart.update = function() { chart(selection) };
+            //chart.update = function() { chart(selection) };
+            chart.update = function() { container.transition().call(chart); };
             chart.container = this;
 
             // var rangez = ranges.call(this, d, i).slice().sort(d3.descending),
