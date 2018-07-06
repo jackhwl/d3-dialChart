@@ -1,7 +1,8 @@
 // put event handlers for header links here
-$(document).ready(function(){
-    var $modal = $("[rel='js-modal']");
-    $("[rel='js-controls']").on("click", "[rel*='js-']", function(evt){
+
+var Header = (function(){
+    var $modal;
+    function headerLinkClicks(evt) {
         evt.preventDefault();
         evt.stopPropagation();
         evt.stopImmediatePropagation();
@@ -12,6 +13,19 @@ $(document).ready(function(){
         .then(function(contents){
             $modal.html(contents).show();
         });
-    })
+    }
 
-});
+    function init() {
+        $modal = $("[rel='js-modal']");
+        $("[rel='js-controls']").on("click", "[rel*='js-']", headerLinkClicks);
+    }
+
+    return {
+        init: init
+    };
+
+})();
+
+
+
+$(document).ready(Header.init);
