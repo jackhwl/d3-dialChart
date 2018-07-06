@@ -2953,8 +2953,12 @@ nv.models.dial = function() {
           
             function drawGlare() {
                 // gradient on top panel
+                g.selectAll('.dial-glare').remove();
+                var glareNodes = g.selectAll('.dial-glare').data([d]);
+
                 var rdial3 = r * scale.dial.dash;
-                g.append('svg:path')
+                //console.log(rdial3);
+                glareNodes.enter().append('path')
                   .attr('class', 'dial-glare')
                   .attr('d', 'M ' + (-rdial3) + ',0 A' + rdial3 + ',' + rdial3 + ' 0 0,1 ' + rdial3 + ',0 A' + (rdial3 * 5) + ',' + (rdial3 * 5) + ' 0 0,0 ' + (-rdial3) + ',0')
                   .style('fill', 'url(#glareGradient)')
@@ -3125,8 +3129,11 @@ nv.models.dial = function() {
 
             function drawNeedle() {
                 // needle
-                var n = g.append('svg:g')
-                  .attr('class', 'needle')
+                g.selectAll('.needle').remove();
+                var needleNodes = g.selectAll('.needle').data([d]);
+                var gNeedle = needleNodes.enter().append('g').attr("class", "needle");
+
+                var n = gNeedle
                   .attr('filter', 'url(#dropShadow)')
                   .attr('transform', function(d) { return 'rotate(' + a0(d.caption[0].text) + ')'; })
                   ;
