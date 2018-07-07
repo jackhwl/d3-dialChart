@@ -1,11 +1,13 @@
 var Details = (function(){
-	function loadPerson(evt){
-		evt.preventDefault();
-		evt.stopPropagation();
-		evt.stopImmediatePropagation();
+	function loadPerson(id){
+		// evt.preventDefault();
+		// evt.stopPropagation();
+		// evt.stopImmediatePropagation();
 
-		var rel = $(evt.target).attr("rel");
-		var url = "details/" + rel.substr(rel.lastIndexOf('-')+1) + ".html";
+		// var rel = $(evt.target).attr("rel");
+		// var id = rel.substr(rel.lastIndexOf('-')+1);
+
+		var url = "details/" + id + ".html";
 		$.ajax(url, { dataType: "text" })
 		.then(function(contents){
 			$content.html(contents);
@@ -13,10 +15,10 @@ var Details = (function(){
 	}
 
 	function init() {
-		$items = $("[rel=js-carousel] > [rel=js-content] > [rel=js-items]");
+		//$items = $("[rel=js-carousel] > [rel=js-content] > [rel=js-items]");
 		$content = $("[rel=js-details]");
 
-		$items.on("click", "[rel*='js-item-']", loadPerson);
+		//$items.on("click", "[rel*='js-item-']", loadPerson);
 
 		// on click of a carousel item, do an Ajax request for
 		// the "details/2.html" (or whatever) file for the person
@@ -27,10 +29,12 @@ var Details = (function(){
 		// handler the `$content` element rather than individual
 		// event handlers to each item in the carousel.
 	}
-	var $items, $content;
-	return {
-		init: init
-	};
-})();
 
-$(document).ready(Details.init);
+	var $content;
+
+	return {
+		init: init,
+		loadPerson: loadPerson
+	};
+
+})();
