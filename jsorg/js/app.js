@@ -1,8 +1,5 @@
-$(document).ready(function() {
+var EVT = new EventEmitter2();
 
-    window.EVT = new EventEmitter2();
-    
-    Header.init();
-    Carousel.init();
-    Details.init();
+$(document).ready(function() {
+    EVT.emit("init");
 });

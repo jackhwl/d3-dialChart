@@ -20,6 +20,8 @@ var Header = (function(){
         $("[rel='js-controls']").on("click", "[rel*='js-']", headerLinkClicks);
     }
 
+	EVT.on("init", init);
+
     return {
         init: init
     };

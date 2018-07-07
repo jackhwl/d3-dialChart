@@ -59,6 +59,8 @@ var Carousel = (function () {
 
 	var $content, $items, $left, $right, contentWidth, itemsWidth, position, maxPosition;
 
+	EVT.on("init", init);
+
 	return {
 		init: init
 	};

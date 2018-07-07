@@ -14,10 +14,19 @@ var Details = (function(){
 		});
 	}
 
+	function selectPerson(evt) {
+		evt.preventDefault();
+
+		var id = $(evt.target).attr("data-person");
+
+		EVT.emit("person-selected", id);
+	}
+
 	function init() {
 		//$items = $("[rel=js-carousel] > [rel=js-content] > [rel=js-items]");
 		$content = $("[rel=js-details]");
 
+		$content.on("click", "[rel=js-select-person]", selectPerson);
 		EVT.on("person-selected", loadPerson);
 		//$items.on("click", "[rel*='js-item-']", loadPerson);
 
@@ -32,6 +41,8 @@ var Details = (function(){
 	}
 
 	var $content;
+
+	EVT.on("init", init);
 
 	return {
 		init: init,
