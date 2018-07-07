@@ -27,7 +27,10 @@ var Carousel = (function () {
 	function clickPerson(evt) {
 		var rel = $(evt.target).attr("rel");
 		var id = rel.substr(rel.lastIndexOf('-')+1);
-		Details.loadPerson(id);
+
+		EVT.emit("person-selected", id);
+
+		//Details.loadPerson(id);
 	}
 
 	function init() {

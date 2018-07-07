@@ -18,6 +18,7 @@ var Details = (function(){
 		//$items = $("[rel=js-carousel] > [rel=js-content] > [rel=js-items]");
 		$content = $("[rel=js-details]");
 
+		EVT.on("person-selected", loadPerson);
 		//$items.on("click", "[rel*='js-item-']", loadPerson);
 
 		// on click of a carousel item, do an Ajax request for
