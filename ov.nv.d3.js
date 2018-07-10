@@ -2635,10 +2635,19 @@ nv.models.dial = function() {
             //     rangeMax = d3.max(rangez), //rangez[0]
             //     rangeAvg = rangez[1];
 
+            var wm = width - margin.right - margin.left, // m[1] - m[3],
+                hm = height - margin.top - margin.bottom , //m[0] - m[2],
+                calDomain = [d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]],
+                a = d3.scale.linear().domain(calDomain).range(d.range),
+                a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
+
+            var r = Math.min(wm / 2, hm / 2);
+            //console.log('r=', r);
+
             // Setup containers and skeleton of chart
+            container.selectAll('g.nv-wrap.nv-dial').remove();
             var wrap = container.selectAll('g.nv-wrap.nv-dial').data([d]);
             var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dial');
-            var gEnter = wrapEnter.append('g');
             //var g = wrap.select('g');
 
             // for(var i=0,il=rangez.length; i<il; i++){
@@ -2667,14 +2676,6 @@ nv.models.dial = function() {
             //         .attr('x', xp1(range))
             // }
 
-            var wm = width - margin.right - margin.left, // m[1] - m[3],
-                hm = height - margin.top - margin.bottom , //m[0] - m[2],
-                calDomain = [d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]],
-                a = d3.scale.linear().domain(calDomain).range(d.range),
-                a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
-
-            var r = Math.min(wm / 2, hm / 2);
-            console.log('r=', r);
 
             //var g = d3.select(this).select('g');
             
@@ -2689,9 +2690,11 @@ nv.models.dial = function() {
                 // .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
 
                 // g = wrap.selectAll('.nv-dail-nodes');
-                //wrap.selectAll('.nv-dail-nodes').remove();
+                //g.selectAll('.nv-dail-nodes').remove();
+
+            var gEnter = wrapEnter.append('g');
             gEnter.append('g').attr('class', 'nv-dail-nodes')
-                .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
+                .attr('transform', 'translate(' + (margin.left + r) + ',' + (margin.top + r) + ')');
             var g = wrap.selectAll('.nv-dail-nodes');
 
             wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
