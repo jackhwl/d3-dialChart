@@ -126,3 +126,31 @@ Animation Js
     }
 
 </script>
+
+Web Work
+<script>
+    var longThread = new Worker("long.js");
+
+    longThread.onmessage = function(evt) {
+        var answer = evt.data;
+        // do something with the answer
+    };
+
+    longThread.postMessage({
+        question: "..."
+    });
+
+    // long.js
+
+    function figureOutAnswer(question) {
+        // ...
+
+        return answer;
+    }
+
+    self.onmessage(function(evt){
+        var question = evt.data.question;
+        var answer = figureOutAnswer(question);
+        self.postMessage(answer);
+    });
+</script>
