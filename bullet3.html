@@ -29,17 +29,18 @@
 
 <script>
 
-    var width = 960,
+    var width = 760,
         height = 580,
         bgColor = '#031732',
-        margin = {top: 5, right: 40, bottom: 20, left: 120};
+        margin = {top: 0, right: 0, bottom: 0, left: 0};
 
     var chart = nv.models.dialChart()
             // .width(width - margin.right - margin.left)
             .height(height - margin.top - margin.bottom)
+            .margin(margin)
             // ;
-    console.log(chart.width());
-    console.log(chart.height());
+    //console.log(chart.width());
+    //console.log(chart.height());
     //console.log(chart.pivot);
 
     data = [
