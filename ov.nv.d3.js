@@ -2612,29 +2612,6 @@ nv.models.dial = function() {
                 container = d3.select(this);
             nv.utils.initSVG(container);
 
-            // var rangez = ranges.call(this, d, i).slice(),
-            //     measurez = measures.call(this, d, i).slice(),
-            //     rangeLabelz = rangeLabels.call(this, d, i).slice(),
-            //     measureLabelz = measureLabels.call(this, d, i).slice();
-
-            // Setup Scales
-            // Compute the new x-scale.
-            // var x1 = d3.scale.linear()
-            //     .domain( d3.extent(d3.merge([forceX, rangez])) )
-            //     .range([0, availableWidth]);
-
-            // // Retrieve the old x-scale, if this is an update.
-            // var x0 = this.__chart__ || d3.scale.linear()
-            //     .domain([0, Infinity])
-            //     .range(x1.range());
-
-            // // Stash the new scale.
-            // this.__chart__ = x1;
-
-            // var rangeMin = d3.min(rangez), //rangez[2]
-            //     rangeMax = d3.max(rangez), //rangez[0]
-            //     rangeAvg = rangez[1];
-
             var wm = width - margin.right - margin.left, // m[1] - m[3],
                 hm = height - margin.top - margin.bottom , //m[0] - m[2],
                 calDomain = [d.scaleDomain[0], d.tick.exact ? d.tick.minor * d.tick.major : d.scaleDomain[1]],
@@ -2642,56 +2619,11 @@ nv.models.dial = function() {
                 a0 = d3.scale.linear().domain(d.scaleDomain).range(d.range);
 
             var r = Math.min(wm / 2, hm / 2);
-            //console.log('r=', r);
 
             // Setup containers and skeleton of chart
             container.selectAll('g.nv-wrap.nv-dial').remove();
             var wrap = container.selectAll('g.nv-wrap.nv-dial').data([d]);
             var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dial');
-            //var g = wrap.select('g');
-
-            // for(var i=0,il=rangez.length; i<il; i++){
-            //     var rangeClassNames = 'nv-range nv-range'+i;
-            //     if(i <= 2){
-            //         rangeClassNames = rangeClassNames + ' nv-range'+legacyRangeClassNames[i];
-            //     }
-            //     gEnter.append('rect').attr('class', rangeClassNames);
-            // }
-
-            // gEnter.append('rect').attr('class', 'nv-measure');
-
-            // var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
-            //     w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
-            // var xp0 = function(d) { return d < 0 ? x0(d) : x0(0) },
-            //     xp1 = function(d) { return d < 0 ? x1(d) : x1(0) };
-
-            // for(var i=0,il=rangez.length; i<il; i++){
-            //     var range = rangez[i];
-            //     g.select('rect.nv-range'+i)
-            //         .datum(range)
-            //         .attr('height', availableHeight)
-            //         .transition()
-            //         .duration(duration)
-            //         .attr('width', w1(range))
-            //         .attr('x', xp1(range))
-            // }
-
-
-            //var g = d3.select(this).select('g');
-            
-            //if (!g.empty()) {
-            
-                //g = d3.select(this).append('svg:g')
-
-                //g = gEnter.append('svg:g')
-                //g = gEnter.select().append('svg:g')
-                // gEnter.append('g')
-                // .attr('class', 'nv-dail-nodes')
-                // .attr('transform', 'translate(' + (margin.left + wm / 2) + ',' + (margin.top + hm / 2) + ')');
-
-                // g = wrap.selectAll('.nv-dail-nodes');
-                //g.selectAll('.nv-dail-nodes').remove();
-
             var gEnter = wrapEnter.append('g');
             gEnter.append('g').attr('class', 'nv-dail-nodes')
                 .attr('transform', 'translate(' + (margin.left + r) + ',' + (margin.top + r) + ')');
@@ -2699,38 +2631,12 @@ nv.models.dial = function() {
 
             wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-            //var y2 = needle.type===1 ? -r * needle.length:0;
-
-                //r = 300;
-                //g.selectAll('g').remove();
-                drawCaption();
-                createDefs();
-                drawRim();
-                drawScale();
-                drawGlare();
-                drawNeedle();
-
-                //console.log('endRange=', endRange);
-                //console.log('g=', g);
-                //console.log('r=', r);
-                    // console.log('range=', range(d));
-                    // console.log('angle=', angle);
-                    // console.log('line=', line);
-                    // console.log('d=', d);
-                    // console.log('g=', g);
-                    // console.log('d3.range(points)=', d3.range(points));
-
-                
-            // } else {
-            //     g.select('g.needle')
-            //     .transition().ease('elastic')
-            //     .attr('transform', function(d) { return 'rotate(' + a(d) + ')'; })
-            //     ;
-            //     // g.select('g.rim')
-            //     //   .transition().ease('elastic')
-            //     //   .attr('transform', function(d) { return 'rotate(' + a(d) + ')'; })
-            //     //   ;
-            // }
+            drawCaption();
+            createDefs();
+            drawRim();
+            drawScale();
+            drawGlare();
+            drawNeedle();
         
             function drawRim() {
                 var endRange = a0(d.caption[0].text);
@@ -2862,7 +2768,6 @@ nv.models.dial = function() {
                   }
           
             }
-          
             function drawScale() {
                 g.selectAll('.scale').remove();
                 //gScale = g.append('svg:g').attr('class', 'scale');
@@ -2953,7 +2858,6 @@ nv.models.dial = function() {
                   }
                 }
             }
-          
             function drawGlare() {
                 // gradient on top panel
                 g.selectAll('.dial-glare').remove();
@@ -2967,7 +2871,6 @@ nv.models.dial = function() {
                   .style('fill', 'url(#glareGradient)')
                   ;
             }
-
             function createDefs() {
                 g.selectAll('defs').remove();
                 var defs = g.append('svg:defs')
@@ -3129,7 +3032,6 @@ nv.models.dial = function() {
                   .attr('in', "SourceGraphic");
           
             }
-
             function drawNeedle() {
                 // needle
                 g.selectAll('.needle').remove();
@@ -3176,7 +3078,6 @@ nv.models.dial = function() {
                 }
           
             }
-
             function drawCaption() {
               if (d.needle.type>0) {
                 g.selectAll('text').remove();
