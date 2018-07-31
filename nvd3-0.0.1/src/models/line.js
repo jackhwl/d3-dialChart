@@ -6,6 +6,7 @@ nv.models.line = function() {
   var margin = {top: 0, right: 0, bottom: 0, left: 0}, //consider removing margin options from here... or make margin padding inside the chart (subtract margin from range)
       width = 960,
       height = 500,
+      animate = 500,
       dotRadius = function() { return 2.5 }, //consider removing this, or making similar to scatter
       color = d3.scale.category10().range(),
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID incase user doesn't select one
@@ -224,6 +225,12 @@ nv.models.line = function() {
   chart.height = function(_) {
     if (!arguments.length) return height;
     height = _;
+    return chart;
+  };
+
+  chart.animate = function(_) {
+    if (!arguments.length) return animate;
+    animate = _;
     return chart;
   };
 

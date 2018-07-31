@@ -16,7 +16,6 @@ nv.models.lineWithLegend = function() {
       legend = nv.models.legend().height(30),
       lines = nv.models.line();
 
-
   function chart(selection) {
     selection.each(function(data) {
       var series = data.filter(function(d) { return !d.disabled })
@@ -100,7 +99,7 @@ nv.models.lineWithLegend = function() {
 
 
       var linesWrap = g.select('.linesWrap')
-          .datum(data.filter(function(d) { return !d.disabled }))
+          .datum(data.filter(function(d) { return !d.disabled }));
 
 
       d3.transition(linesWrap).call(lines);

@@ -107,19 +107,19 @@ nv.models.bar = function() {
     return chart;
   };
 
-//   chart.animate = function(_) {
-//     if (!arguments.length) return animate;
-//     animate = _;
-//     return chart;
-//   };
+  chart.animate = function(_) {
+    if (!arguments.length) return animate;
+    animate = _;
+    return chart;
+  };
 
-//   chart.xaxis = {};
-//   // Expose the x-axis' tickFormat method.
-//   d3.rebind(chart.xaxis, xAxis, 'tickFormat');
+  chart.xaxis = {};
+  // Expose the x-axis' tickFormat method.
+  d3.rebind(chart.xaxis, xAxis, 'tickFormat');
 
-//   chart.yaxis = {};
-//   // Expose the y-axis' tickFormat method.
-//   d3.rebind(chart.yaxis, yAxis, 'tickFormat');
+  chart.yaxis = {};
+  // Expose the y-axis' tickFormat method.
+  d3.rebind(chart.yaxis, yAxis, 'tickFormat');
 
   return chart;
 }
