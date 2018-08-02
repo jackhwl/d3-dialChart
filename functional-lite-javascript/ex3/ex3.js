@@ -1,5 +1,8 @@
-function mult(x,y,z) {
-	return x * y * z;
+function mult(...args) {
+	if (args.length<=2) {
+		return args[0] + args[1];
+	}
+	return args[0] * mult(...args.slice(1));
 }
 
 mult(3,4,5);	// 60
