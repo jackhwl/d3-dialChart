@@ -30,17 +30,17 @@ function addn(arr) {
 }
 
 function addn(arr) {
-	if (vals.length > 2) {
-		return addn(
-			[
-				function() {
-					return add2(vals[0],vals[1]);
-				}
-			]
-			.concat(vals.slice(2))
-		);
-	}
-    return add2(vals[0],vals[1]);
+	// if (vals.length > 2) {
+	// 	return addn(
+	// 		[
+	// 			function() {
+	// 				return add2(vals[0],vals[1]);
+	// 			}
+	// 		]
+	// 		.concat(vals.slice(2))
+	// 	);
+	// }
+    // return add2(vals[0],vals[1]);
 }
 
 //add(foo(), bar())
