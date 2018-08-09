@@ -2607,6 +2607,7 @@ nv.models.dial = function() {
 
     function chart(selection) {
         selection.each(function(d, i) {
+            console.log('d=',d);
             var availableWidth = width - margin.left - margin.right,
                 availableHeight = height - margin.top - margin.bottom,
                 container = d3.select(this);
@@ -2626,7 +2627,8 @@ nv.models.dial = function() {
             var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-dial');
             var gEnter = wrapEnter.append('g');
             gEnter.append('g').attr('class', 'nv-dail-nodes')
-                .attr('transform', 'translate(' + (margin.left + r) + ',' + (margin.top + r) + ')');
+                //.attr('transform', 'translate(' + (margin.left + r) + ',' + (margin.top + r) + ')');
+                .attr('transform', 'translate(' + availableWidth / 2 + ',' + availableHeight / 2 + ')');
             var g = wrap.selectAll('.nv-dail-nodes');
 
             wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
