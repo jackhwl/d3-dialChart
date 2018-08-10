@@ -57,6 +57,7 @@ nv.render = function render(stepSize) {
       nv.graphs.push(chart);
     }
     
+    
     render.queue.splice(0, i);
 
     if (render.queue.length > 0) setTimeout(arguments.callee, 0);
