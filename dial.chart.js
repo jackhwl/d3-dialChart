@@ -42,9 +42,9 @@ olapDialChart = function() {
           .attr('transform', 'translate(' + (m[3] + wm / 2) + ',' + (m[0] + hm / 2) + ')');
 
         var y2 = needle.type===1 ? -r * needle.length:0;
-        drawCaption(g, r);
         createDefs(g.append('svg:defs'), 0,0,0.5,1);
         drawRim(a(d), g.append('svg:g').attr('class', 'rim'), r);
+        drawCaption(g, r);
         drawScale(a, g.append('svg:g').attr('class', 'scale'), r);
         drawGlare(g, r);
         drawNeedle(a, g, r);
@@ -216,6 +216,9 @@ olapDialChart = function() {
       var middle = a.ticks(tick.minor * tick.major).filter(function(d) { return major.indexOf(d) != -1; });
       var majorRange = tick.exact ? [major[0], scaleDomain[1]] : [major[0], major[major.length-1]];
 
+      console.log('minor=', minor);
+      console.log('major=', major);
+      console.log('majorRange=', majorRange);
       g.selectAll('text.label')
         .data(needle.type>0 ? majorRange : major)
         .enter().append('svg:text')
@@ -230,7 +233,7 @@ olapDialChart = function() {
           'alignment-baseline': 'middle',
           'text-anchor': 'middle',
         })
-        .text(a.tickFormat())
+        .text(function(d){ return a.tickFormat()(d);})
         ;
 
       if (tick.mark == 'circle') {
@@ -519,7 +522,8 @@ olapDialChart = function() {
     }
 
     function drawCaption(g, r) {
-      if (needle.type>0) {
+      //if (needle.type>0) {
+        console.log('caption=',caption);
         g.selectAll('text')
           .data(caption)
           .enter().append('svg:text')
@@ -530,7 +534,7 @@ olapDialChart = function() {
             'style': function(d){return 'font-family: '+d.family+';font-size: '+(r * d.size * d.scale)+'px;font-weight: '+d.weight+';fill: '+d.color+';alignment-baseline: middle;text-anchor: middle;'}
           })
           ;
-      }
+      //}
     }
 
   }
