@@ -1,3 +1,4 @@
+// import productsRouter from 
 const express = require('express');
 const chalk = require('chalk');
 const debug = require('debug')('app');
@@ -6,6 +7,9 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const aboutRouter = express.Router();
+const storeRouter = express.Router();
 
 app.use(morgan('tiny')); // 'combined'
 app.use(express.static(path.join(__dirname, '/public/')));
@@ -17,10 +21,63 @@ app.set('views', './src/views');
 // app.set('view engine', 'pug');
 app.set('view engine', 'ejs');
 
+
+storeRouter.route('/')
+  .get((req, res) => {
+    res.render(
+      'store',
+      {
+        title: 'Bridletowne Park Church',
+        nav: [{ link: '/', title: 'Home' },
+          { link: '/about', title: 'About' },
+          { link: '/products', title: 'Products' },
+          { link: '/store', title: 'Store' }]
+      }
+    );
+  });
+
+aboutRouter.route('/')
+  .get((req, res) => {
+    res.render(
+      'about',
+      {
+        title: 'Bridletowne Park Church',
+        nav: [{ link: '/', title: 'Home' },
+          { link: '/about', title: 'About' },
+          { link: '/products', title: 'Products' },
+          { link: '/store', title: 'Store' }]
+      }
+    );
+  });
+aboutRouter.route('/me')
+  .get((req, res) => {
+    res.send('hello about myself');
+  });
+const nav = [
+  { link: '/', title: 'Home' },
+  { link: '/about', title: 'About' },
+  { link: '/products', title: 'Products' },
+  { link: '/store', title: 'Store' }
+];
+
+const productsRouter = require('./src/routes/productsRoutes')(nav);
+
+app.use('/about', aboutRouter);
+app.use('/products', productsRouter);
+app.use('/store', storeRouter);
 app.get('/', (req, res) => {
   // res.sendFile(path.join(__dirname, 'views/index.html'));
-  res.render('index', { title: 'Bridletowne Park Church', list: ['a', 'b'] });
   // res.render('home', { title: 'MyLibrary', list: ['a', 'b'] });
+  res.render(
+    'index',
+    {
+      title: 'Bridletowne Park Church',
+      nav: [{ link: '/', title: 'Home' },
+        { link: '/about', title: 'About' },
+        { link: '/products', title: 'Products' },
+        { link: '/store', title: 'Store' }]
+    }
+  );
 });
 
 app.listen(port, () => {
