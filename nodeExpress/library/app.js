@@ -19,8 +19,8 @@ app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
   // res.sendFile(path.join(__dirname, 'views/index.html'));
-  // res.render('index', { title: 'MyLibrary', list: ['a', 'b'] });
-  res.render('home', { title: 'MyLibrary', list: ['a', 'b'] });
+  res.render('index', { title: 'Bridletowne Park Church', list: ['a', 'b'] });
+  // res.render('home', { title: 'MyLibrary', list: ['a', 'b'] });
 });
 
 app.listen(port, () => {
