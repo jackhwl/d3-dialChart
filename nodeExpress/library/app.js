@@ -4,10 +4,23 @@ const chalk = require('chalk');
 const debug = require('debug')('app');
 const morgan = require('morgan');
 const path = require('path');
+const sql = require('mssql');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+const config = {
+  user: 'library',
+  password: 'Hkksxds1',
+  server: 'pslibrary17.database.windows.net',
+  database: 'PSLibrary',
+
+  options: {
+    encrypt: true // Use this if you're on Windows Azure
+  }
+};
+
+sql.connect(config).catch(err => debug(err));
 const aboutRouter = express.Router();
 const storeRouter = express.Router();
 
