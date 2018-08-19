@@ -10,13 +10,13 @@ function router(nav) {
         .get((req, res) => {
             (async function query() {
                 const request = new sql.Request();
-                const result = await request.query('select * from products');
+                const { recordset } = await request.query('select * from products');
                 res.render(
                     'productListView',
                     {
                         title: 'Bridletowne Park Church',
                         nav,
-                        products: result.recordset
+                        products: recordset
                     }
                 );
             }());
@@ -24,15 +24,20 @@ function router(nav) {
 
     productsRouter.route('/:id')
         .get((req, res) => {
-            const { id } = req.params;
-            res.render(
-                'productView',
-                {
-                    title: 'Bridletowne Park Church',
-                    nav,
-                    product: products[id]
-                }
-            );
+            (async function query() {
+                const { id } = req.params;
+                const request = new sql.Request();
+                const { recordset } = await request.input('id', sql.Int, id)
+                    .query('select * from products where id = @id');
+                res.render(
+                    'productView',
+                    {
+                        title: 'Bridletowne Park Church',
+                        nav,
+                        product: recordset[0]
+                    }
+                );
+            }());
         });
 
     return productsRouter;
