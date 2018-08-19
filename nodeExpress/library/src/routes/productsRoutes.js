@@ -6,22 +6,20 @@ const sql = require('mssql');
 const debug = require('debug')('app:productsRoutes');
 
 function router(nav) {
-
     productsRouter.route('/')
         .get((req, res) => {
-            const request = new sql.Request();
-            request.query('select * from products')
-                .then((result) => {
-                    debug(result);
-                    res.render(
-                        'productListView',
-                        {
-                            title: 'Bridletowne Park Church',
-                            nav,
-                            products: result.recordset
-                        }
-                    );
-                });
+            (async function query() {
+                const request = new sql.Request();
+                const result = await request.query('select * from products');
+                res.render(
+                    'productListView',
+                    {
+                        title: 'Bridletowne Park Church',
+                        nav,
+                        products: result.recordset
+                    }
+                );
+            }());
         });
 
     productsRouter.route('/:id')
