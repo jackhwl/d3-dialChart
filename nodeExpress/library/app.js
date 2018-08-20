@@ -74,9 +74,11 @@ const nav = [
 ];
 
 const productsRouter = require('./src/routes/productsRoutes')(nav);
+const adminRouter = require('./src/routes/adminRoutes')(nav);
 
 app.use('/about', aboutRouter);
 app.use('/products', productsRouter);
+app.use('/admin', adminRouter);
 app.use('/store', storeRouter);
 app.get('/', (req, res) => {
   // res.sendFile(path.join(__dirname, 'views/index.html'));
