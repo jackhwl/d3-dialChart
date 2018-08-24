@@ -6,6 +6,13 @@ const debug = require('debug')('app:productsRouter');
 const productsRouter = express.Router();
 
 function router(nav) {
+    productsRouter.use((req, res, next) => {
+        if (req.user) {
+            next();
+        } else {
+            res.redirect('/');
+        }
+    });
     productsRouter.route('/')
         .get((req, res) => {
             const url = 'mongodb://localhost:27017';
@@ -35,7 +42,7 @@ function router(nav) {
                 client.close();
             }());
         });
-       productsRouter.route('/:id')
+    productsRouter.route('/:id')
         .get((req, res) => {
             const { id } = req.params;
             const url = 'mongodb://localhost:27017';
@@ -65,8 +72,8 @@ function router(nav) {
                 client.close();
             }());
         });
-       return productsRouter;
-    }
+    return productsRouter;
+}
     
 /* mssql 
 const sql = require('mssql');
