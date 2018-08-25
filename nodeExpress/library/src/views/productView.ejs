@@ -79,6 +79,10 @@
           <div class="product-item-description d-flex mr-auto">
             <div class="bg-faded p-5 rounded">
               <p class="mb-0"><%=product.description%></p>
+              <p class="mb-0">
+              <img class="product-item-img mx-auto d-flex rounded img-fluid mb-3 mb-lg-0" 
+              src="<%=product.details.image_url%>" alt="">
+              <%-product.details.description%></p>
             </div>
           </div>
         </div>
