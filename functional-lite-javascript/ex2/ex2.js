@@ -1,4 +1,4 @@
-function foo(x, y) { /* .. */ 
+function foo(x, y) {
     return function() {
         return x+y;
     }
