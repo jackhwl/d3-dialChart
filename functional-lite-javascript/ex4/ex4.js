@@ -1,11 +1,35 @@
 // code here! :)
-// function foo(){
-//     return 42;
-// }
+// 1. Write two functions, each which return a different number value when called.
 
-// function bar() {
-//     return 10;
-// }
+function foo() {
+    return 42;
+}
+
+function bar() {
+    return 10;
+}
+
+
+// 2. Write an `add(..)` function that takes two numbers and adds them and returns the result. 
+//  Call `add(..)` with the results of your two functions from (1) and print the result to the console.
+
+function add(x, y) {
+    return x + y;
+}
+
+add(foo(), bar())  //52 
+
+// 3. Write an `add2(..)` that takes two functions instead of two numbers, 
+//  and it calls those two functions and then sends those values to `add(..)`, just like you did in (2) above.
+
+function add2(fn1, fn2) {
+    return add(fn1(), fn2());
+}
+
+add2(foo, bar);  // 52 verified
+
+// 4. Replace your two functions from (1) with a single function that takes a value and returns a function back, 
+//      where the returned function will return the value when it's called.
 
 function foo(x) {
     return function() {
@@ -13,34 +37,44 @@ function foo(x) {
     }
 }
 
-function add(x, y) {
-    return x + y;
-}
+add2(foo(10), foo(42));  // 52 verified
 
-function add2(fn1, fn2) {
-    return add(fn1(), fn2());
-}
+// 5. Write an `addn(..)` that can take an array of 2 or more functions, and using only `add2(..)`, adds them together. 
+//  Try it with a loop. Try it without a loop (recursion). Try it with built-in array functional helpers (map/reduce).
 
 function addn(arr) {
     var sum = 0;
-    for(var i = 0; i < arr.length; i++) {
-        sum = add2(foo(arr[i]), foo(sum));
+    for(var i = 0; i< arr.length; i++) {
+        sum = add2(foo(sum), foo(arr[i]));
     }
     return sum;
 }
 
+addn([1,2,3,4,5]);   // 15 verified
+
+
+
 function addn(arr) {
-	// if (vals.length > 2) {
-	// 	return addn(
-	// 		[
-	// 			function() {
-	// 				return add2(vals[0],vals[1]);
-	// 			}
-	// 		]
-	// 		.concat(vals.slice(2))
-	// 	);
-	// }
-    // return add2(vals[0],vals[1]);
+    if (arr.length <= 2) {
+        return add2(arr[0], arr[1]);
+    }
+    return addn([
+        function() {
+            return add2(arr[0], arr[1])
+        }]
+        .concat(arr.slice(2))
+    );
+    //return add2(foo(arr[0]), foo(addn(arr.slice(1))));
+    
 }
 
-//add(foo(), bar())
+function addn(...arr) {
+    return arr.slice(1)
+        .reduce(function(prev, cur) {
+            return function() {
+                return add2(prev, cur);
+            };
+        }, arr[0])();
+}
+
+addn(foo(10), foo(42), foo(56), foo(73));
