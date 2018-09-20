@@ -12,3 +12,9 @@ console.log(
 	(x * 2) === fns[x*2]()
 );
 // true
+// var x = 1;
+// function foo( x=2, f = function(){return x;}){
+// 	var x=5;
+// 	console.log(f());
+// }
+// foo();
