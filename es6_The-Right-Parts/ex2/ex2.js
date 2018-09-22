@@ -12,3 +12,9 @@ function bar() {
 console.log(
 	bar().join("") === "281012"
 );
+
+function foo() {
+	return [1, 2, 3, 4, 5];
+}
+
+var [a,b=42,c,...args]=foo() || [];
