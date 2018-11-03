@@ -8,7 +8,7 @@ function wowify(...thatWhichShouldBeWowed: string[]) {
   });
   return thatWhichShouldBeWowed;
 }
- 
+
 /**
 *  Returns the same data, but meh!!!!
 */
