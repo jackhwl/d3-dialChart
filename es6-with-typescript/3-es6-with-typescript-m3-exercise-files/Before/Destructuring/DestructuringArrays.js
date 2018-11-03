@@ -1,3 +1,7 @@
+var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
 var names = ['Alice', 'Bob', 'Charlie', 'Dana', 'Elvis', 'Fran', 'George', 'Hope'];
 var names2 = ['Isaac', 'Jane'];
 var names3 = names.concat(["Kyle"], names2);
@@ -8,11 +12,10 @@ multiGreet();
 function multiGreet() {
     var items = [];
     for (var _i = 0; _i < arguments.length; _i++) {
-        items[_i - 0] = arguments[_i];
+        items[_i] = arguments[_i];
     }
     items.forEach(function (item) {
-        console.log((_a = ["Hello, ", "."], _a.raw = ["Hello, ", "."], friend(_a, item)));
-        var _a;
+        console.log(friend(__makeTemplateObject(["Hello, ", "."], ["Hello, ", "."]), item));
     });
 }
 function friend(strings) {

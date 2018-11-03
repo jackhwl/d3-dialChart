@@ -1,15 +1,11 @@
-System.register([], function(exports_1) {
+define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function printNumbers(max) {
         for (var i = 1; i <= max; i++) {
             console.log(i);
         }
     }
-    return {
-        setters:[],
-        execute: function() {
-            printNumbers(2);
-            exports_1("default","ForLoop");
-        }
-    }
+    printNumbers(2);
+    exports.default = "ForLoop";
 });
