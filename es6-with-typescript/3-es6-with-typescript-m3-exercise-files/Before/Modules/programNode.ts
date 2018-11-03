@@ -9,4 +9,4 @@ const result = wowify(...interestingThings);
 
 ////$('#result').html(result.join('<br/>'));
 
-console.log(chalk.bold.red(result.join('\n')));
+console.log(chalk.bold.yellow(result.join('\n')));

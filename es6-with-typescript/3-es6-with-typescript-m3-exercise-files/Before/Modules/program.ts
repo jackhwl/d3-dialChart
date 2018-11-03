@@ -7,4 +7,4 @@ const result = wowify(...interestingThings);
 
 //document.getElementById('result').innerHTML = result.join('<br/>');
 
-$('#result').html(result.join('<br/>'));
+$('#result').html(result.join(' <br/>'));
