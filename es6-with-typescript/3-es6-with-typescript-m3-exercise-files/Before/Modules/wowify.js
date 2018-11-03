@@ -6,7 +6,7 @@ function wowify() {
         thatWhichShouldBeWowed[_i] = arguments[_i];
     }
     thatWhichShouldBeWowed.forEach(function (item, index) {
-        thatWhichShouldBeWowed[index] = item + " WOW!!!!";
+        thatWhichShouldBeWowed[index] = item + " WOW!!!";
     });
     return thatWhichShouldBeWowed;
 }
