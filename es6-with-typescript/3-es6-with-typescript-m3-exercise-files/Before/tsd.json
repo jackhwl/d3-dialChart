@@ -1,0 +1,18 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "hapi/hapi.d.ts": {
+      "commit": "db3a54c801e29e73bdaae327a64ed7991778c958"
+    },
+    "chalk/chalk.d.ts": {
+      "commit": "0dd29bf8253536ae24e61c109524e924ea510046"
+    },
+    "systemjs/systemjs.d.ts": {
+      "commit": "0dd29bf8253536ae24e61c109524e924ea510046"
+    }
+  }
+}
