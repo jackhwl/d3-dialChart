@@ -1,0 +1,14 @@
+{
+  "name": "es6-with-typescript-1.5-pluralsight",
+  "version": "1.0.0",
+  "description": "Sample code for ES6 with TypeScript 1.5 Pluralsight course",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Steve Ognibene (c) 2015, Pluralsight",
+  "license": "Pluralsight",
+  "dependencies": {
+    "hapi": "^8.8.0"
+  }
+}
