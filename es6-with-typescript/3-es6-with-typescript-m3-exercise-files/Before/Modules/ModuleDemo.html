@@ -14,8 +14,11 @@
     <h1>ES6 with TypeScript 1.8 - modules demo</h1>
   </header>
   <div id="result"></div>
-  <script src="../require-config.js"></script>
-  <script data-main="program" src="/scripts/require/require.js"></script>
+  <script src="/scripts/systemjs/system.js"></script>
+  <script src="../system-config.js"></script>
+  <script>
+  System.import('program');
+</script>
   <!-- <script src="wowify.js"></script>
   <script src="program.js"></script> -->
 </body>

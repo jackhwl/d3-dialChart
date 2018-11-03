@@ -1,17 +1,20 @@
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./wowify", "chalk"], factory);
-    }
-})(function (require, exports) {
+System.register(["./wowify", "chalk"], function (exports_1, context_1) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var wowify_1 = require("./wowify");
-    var chalk = require("chalk");
-    var interestingThings = ['The Sun', 'The Moon', 'The Stars'];
-    var result = wowify_1.default.apply(void 0, interestingThings);
-    console.log(chalk.bold.yellow(result.join('\n')));
+    var wowify_1, chalk, interestingThings, result;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [
+            function (wowify_1_1) {
+                wowify_1 = wowify_1_1;
+            },
+            function (chalk_1) {
+                chalk = chalk_1;
+            }
+        ],
+        execute: function () {
+            interestingThings = ['The Sun', 'The Moon', 'The Stars'];
+            result = wowify_1.default.apply(void 0, interestingThings);
+            console.log(chalk.bold.yellow(result.join(' \n')));
+        }
+    };
 });

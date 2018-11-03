@@ -1,25 +1,17 @@
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
+System.register([], function (exports_1, context_1) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    var __moduleName = context_1 && context_1.id;
     function wowify() {
         var thatWhichShouldBeWowed = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             thatWhichShouldBeWowed[_i] = arguments[_i];
         }
         thatWhichShouldBeWowed.forEach(function (item, index) {
-            thatWhichShouldBeWowed[index] = item + " WOW!!!!!";
+            thatWhichShouldBeWowed[index] = item + " WOW!!!!";
         });
         return thatWhichShouldBeWowed;
     }
-    exports.default = wowify;
+    exports_1("default", wowify);
     function mehify() {
         var thatWhichShouldBeMeh = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -30,5 +22,10 @@
         });
         return thatWhichShouldBeMeh;
     }
-    exports.mehify = mehify;
+    exports_1("mehify", mehify);
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
 });

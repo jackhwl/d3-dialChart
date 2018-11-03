@@ -1,6 +1,6 @@
-define(["require", "exports"], function (require, exports) {
+System.register([], function (exports_1, context_1) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    var __moduleName = context_1 && context_1.id;
     function favoriteFood(name) {
         if (name === "Amy") {
             var fav = "pizza";
@@ -10,5 +10,10 @@ define(["require", "exports"], function (require, exports) {
         }
         return fav;
     }
-    exports.default = "Hoisting";
+    return {
+        setters: [],
+        execute: function () {
+            exports_1("default", "Hoisting");
+        }
+    };
 });

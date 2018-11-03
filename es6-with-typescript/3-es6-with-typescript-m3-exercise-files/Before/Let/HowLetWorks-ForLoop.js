@@ -1,11 +1,16 @@
-define(["require", "exports"], function (require, exports) {
+System.register([], function (exports_1, context_1) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    var __moduleName = context_1 && context_1.id;
     function printNumbers(max) {
         for (var i = 1; i <= max; i++) {
             console.log(i);
         }
     }
-    printNumbers(2);
-    exports.default = "ForLoop";
+    return {
+        setters: [],
+        execute: function () {
+            printNumbers(2);
+            exports_1("default", "ForLoop");
+        }
+    };
 });

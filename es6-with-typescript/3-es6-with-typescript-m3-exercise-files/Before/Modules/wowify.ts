@@ -4,7 +4,7 @@
 */
 function wowify(...thatWhichShouldBeWowed: string[]) {
   thatWhichShouldBeWowed.forEach((item, index) => {
-      thatWhichShouldBeWowed[index] = `${item} WOW!!!!!`;
+      thatWhichShouldBeWowed[index] = `${item} WOW!!!!`;
   });
   return thatWhichShouldBeWowed;
 }
