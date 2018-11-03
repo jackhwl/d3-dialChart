@@ -8,7 +8,7 @@ function wowify(...thatWhichShouldBeWowed: string[]) {
   });
   return thatWhichShouldBeWowed;
 }
-
+ 
 /**
 *  Returns the same data, but meh!!!!
 */
@@ -18,3 +18,5 @@ function mehify(...thatWhichShouldBeMeh: string[]) {
   });
   return thatWhichShouldBeMeh;
 }
+
+export {wowify as default, mehify}; // wowify as superWowify  rename
