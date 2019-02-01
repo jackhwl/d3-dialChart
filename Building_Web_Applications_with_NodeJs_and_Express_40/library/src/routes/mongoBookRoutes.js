@@ -7,6 +7,13 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'library2App';
 
 function router(nav) {
+  mongoBookRouter.use((req, res, next) => {
+    if (req.user) {
+      next();
+    } else {
+      res.redirect('/');
+    }
+  });
   mongoBookRouter.route('/')
     .get((req, res) => {
       (async function query() {
