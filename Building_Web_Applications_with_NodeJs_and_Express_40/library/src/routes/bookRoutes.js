@@ -4,7 +4,7 @@ const sql = require('mssql');
 const debug = require('debug')('app:bookRoutes');
 
 function router(nav) {
-    const books = [
+  const books = [
         {
           title: 'War and Peace',
           genre: 'Historical Fiction',
@@ -53,35 +53,41 @@ function router(nav) {
           author: 'Lev Nikolayevich Tolstoy',
           read: false
         }];
-    bookRouter.route('/')
+  bookRouter.route('/')
     .get((req, res) => {
-      const request = new sql.Request();
-      request.query('select * from books')
-      .then((result) => {
-        debug(result);
+      (async function query() {
+        const request = new sql.Request();
+        const { recordset } = await request.query('select * from books');
         res.render(
-        'bookListView', 
-        { 
-            nav, 
+          'bookListView',
+          {
+            nav,
             title: 'Library',
-            books: result.recordset
-        });
+            books: recordset
+          }
+        );
+      }());
     });
-  });
 
-    bookRouter.route('/:id')
+  bookRouter.route('/:id')
     .get((req, res) => {
+      (async function query() {
         const { id } = req.params;
+        const request = new sql.Request();
+        const { recordset } = await request.input('id', sql.Int, id)
+          .query('select * from books where id = @id');
         res.render(
-            'bookView', 
-            { 
-            nav, 
+          'bookView',
+          {
+            nav,
             title: 'Library',
-            book: books[id]
-            });
-        });
+            book: recordset[0]
+          }
+        );
+      }());
+    });
 
-    return bookRouter;
+  return bookRouter;
 }
 
 module.exports = router;
