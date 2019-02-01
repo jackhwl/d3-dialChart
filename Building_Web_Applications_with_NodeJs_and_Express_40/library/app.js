@@ -32,16 +32,22 @@ app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
 const nav = [{ link: '/books', title: 'Book' },
+  { link: '/mongobooks', title: 'MongoBooks' },
   { link: '/authors', title: 'Author' }];
 
 const bookRouter = require('./src/routes/bookRoutes')(nav);
+const mongoBookRouter = require('./src/routes/mongoBookRoutes')(nav);
+const adminRouter = require('./src/routes/adminRoutes')(nav);
 
 app.use('/books', bookRouter);
+app.use('/mongobooks', mongoBookRouter);
+app.use('/admin', adminRouter);
 app.get('/', (req, res) => {
   res.render(
     'index',
     {
       nav: [{ link: '/books', title: 'Books' },
+        { link: '/mongobooks', title: 'MongoBooks' },
         { link: '/authors', title: 'Authors' }],
       title: 'Library'
     }
