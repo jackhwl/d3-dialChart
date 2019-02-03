@@ -38,3 +38,20 @@ io.sockets.on('connection', function (socket) {
 app.listen(8080, 'localhost');
 
 console.log('Server running!');
+
+// new RegExp("([^=;]+)(=([^;#]*);)", "g")
+
+
+// select don.bg, (acc.acceptorSum - don.donorSum) as lackAmount
+// from (
+//   select sum(amount) as donorSum, bg
+//   from donor
+//   group by bg
+// ) don
+// join (
+//   select sum(amount) as acceptorSum, bg
+//   from acceptor
+//   group by bg
+// ) acc
+// on (don.bg=acc.bg)
+// where acc.acceptorSum - don.donorSum > 0
