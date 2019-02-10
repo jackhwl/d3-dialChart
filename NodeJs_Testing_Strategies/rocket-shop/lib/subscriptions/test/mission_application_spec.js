@@ -1,5 +1,5 @@
 var assert = require("assert");
-var MembershipApplication = require('../membership_application');
+var MembershipApplication = require('../models/membership_application');
 
 describe("Membership application requirements", () => {
     var validApp;
