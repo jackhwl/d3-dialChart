@@ -11,5 +11,8 @@
   "dependencies": {
     "moment": "2.24.0",
     "underscore": "1.9.1"
+  },
+  "devDependencies": {
+    "sinon": "7.2.3"
   }
 }
