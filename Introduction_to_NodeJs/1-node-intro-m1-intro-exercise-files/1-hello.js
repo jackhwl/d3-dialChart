@@ -2,8 +2,10 @@
 // substitute with your own port and (optionally) IP as required
 
 var http = require('http');
+process.env.IP = '127.0.0.1';
+process.env.PORT = '2019';
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
+  res.end('Hello World on 2019/02/10 Grammy Reward night.\n');
 }).listen(process.env.PORT, process.env.IP);
 console.log('Server running!');
