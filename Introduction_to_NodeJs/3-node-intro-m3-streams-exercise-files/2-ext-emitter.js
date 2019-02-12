@@ -1,4 +1,4 @@
-var Resource = require('./resource');
+var Resource = require('./resource2');
 
 var r = new Resource(7);
 
