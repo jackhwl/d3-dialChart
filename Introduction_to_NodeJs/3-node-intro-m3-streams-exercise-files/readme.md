@@ -24,3 +24,32 @@ myEmitter.on('event', (a, b) => {
   // Prints: a b {}
 });
 myEmitter.emit('event', 'a', 'b');
+
+Events
+
+Passing arguments and this to listeners
+Asynchronous vs. Synchronous
+Handling events only once
+Error events
+Class: EventEmitter
+
+Event: 'newListener'
+Event: 'removeListener'
+EventEmitter.listenerCount(emitter, eventName)
+EventEmitter.defaultMaxListeners
+emitter.addListener(eventName, listener)
+emitter.emit(eventName[, ...args])
+emitter.eventNames()
+emitter.getMaxListeners()
+emitter.listenerCount(eventName)
+emitter.listeners(eventName)
+emitter.off(eventName, listener)
+emitter.on(eventName, listener)
+emitter.once(eventName, listener)
+emitter.prependListener(eventName, listener)
+emitter.prependOnceListener(eventName, listener)
+emitter.removeAllListeners([eventName])
+emitter.removeListener(eventName, listener)
+emitter.setMaxListeners(n)
+emitter.rawListeners(eventName)
+
